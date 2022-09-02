@@ -1,8 +1,10 @@
+import { ActivityNode } from './activity';
 import { FlowNode } from '../flow-node';
 
 export enum EventType {
   End = 'end',
   Start = 'start',
+  Boundary = 'boundary',
   Intermediate = 'intermediate',
 }
 
@@ -24,6 +26,8 @@ export enum IntermediateEventType {
 
 export class EventNode extends FlowNode {
   type: EventType = EventType.Start;
+
+  attachedToRef?: ActivityNode;
 
   intermediateType?: IntermediateType;
   intermediateEventType?: IntermediateEventType;
