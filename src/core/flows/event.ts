@@ -13,10 +13,11 @@ export enum IntermediateType {
   Catch = 'catch',
 }
 
-export enum IntermediateEventType {
+export enum EventDefinitionType {
   None = 'none',
   Link = 'link',
   Timer = 'timer',
+  Error = 'error',
   Signal = 'signal',
   Message = 'message',
   Escalation = 'escalation',
@@ -30,7 +31,7 @@ export class EventNode extends FlowNode {
   attachedToRef?: ActivityNode;
 
   intermediateType?: IntermediateType;
-  intermediateEventType?: IntermediateEventType;
+  eventDefinitionType?: EventDefinitionType;
 
   constructor(data?: Partial<EventNode>) {
     super(data);

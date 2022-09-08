@@ -11,11 +11,10 @@ export enum TaskType {
 }
 
 export enum ActivityType {
-  Sub = 'sub',
   Task = 'task',
-  Call = 'call',
-  Event = 'event',
+  SubProcess = 'subProcess',
   Transaction = 'transaction',
+  CallActivity = 'callActivity',
 }
 
 export class ActivityNode extends FlowNode {
