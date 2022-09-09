@@ -14,7 +14,6 @@ export enum IntermediateType {
 }
 
 export enum EventDefinitionType {
-  None = 'none',
   Link = 'link',
   Timer = 'timer',
   Error = 'error',
@@ -29,7 +28,6 @@ export class EventNode extends FlowNode {
   type: EventType = EventType.Start;
 
   attachedToRef?: ActivityNode;
-
   intermediateType?: IntermediateType;
   eventDefinitionType?: EventDefinitionType;
 

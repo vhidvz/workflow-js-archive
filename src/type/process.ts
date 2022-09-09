@@ -1,4 +1,9 @@
-export type ProcessGateway = 'complexGateway' | 'parallelGateway' | 'inclusiveGateway' | 'exclusiveGateway';
+export type ProcessGateway =
+  | 'complexGateway'
+  | 'parallelGateway'
+  | 'inclusiveGateway'
+  | 'exclusiveGateway'
+  | 'eventBasedGateway';
 
 export type ProcessEvent =
   | 'endEvent'
@@ -26,13 +31,13 @@ export type ProcessTask =
   | 'serviceTask'
   | 'businessTask';
 
-export type ProcessActivity = 'task' | ProcessTask | 'subProcess' | 'transaction' | 'callActivity';
+export type ProcessActivity = 'task' | 'subProcess' | 'transaction' | 'callActivity';
 
-export type Process = {
+export type ProcessType = {
   id: string;
   name?: string;
   isExecutable: boolean;
-  laneSet: {
+  laneSet?: {
     id: string;
     name?: string;
     lane: {
@@ -41,13 +46,13 @@ export type Process = {
       flowNodeRef: string[];
     }[];
   };
-  sequenceFlow: {
+  sequenceFlow?: {
     id: string;
     sourceRef: string;
     targetRef: string;
   }[];
 } & {
-  [x in ProcessGateway]: {
+  [x in 'complexGateway' | 'inclusiveGateway' | 'exclusiveGateway']?: {
     id: string;
     name?: string;
     default?: string;
@@ -55,26 +60,67 @@ export type Process = {
     outgoing: string[];
   }[];
 } & {
-  [x in ProcessEvent]: {
+  [x in 'parallelGateway' | 'eventBasedGateway']?: {
     id: string;
     name?: string;
     incoming: string[];
     outgoing: string[];
-    attachedToRef?: string;
-  }[] & {
-    [x in ProcessEventDefinition]: {
-      id: string;
-    };
-  };
+  }[];
 } & {
-  [x in ProcessActivity]: {
+  [x in 'intermediateThrowEvent' | 'intermediateCatchEvent']?: ({
     id: string;
     name?: string;
-    triggeredByEvent: boolean;
-  }[] & {
-    [x in ProcessActivity]: {
+    incoming: string[];
+    outgoing: string[];
+  } & {
+    [x in ProcessEventDefinition]?: {
       id: string;
       name?: string;
     };
-  };
+  })[];
+} & {
+  startEvent?: ({
+    id: string;
+    name?: string;
+    outgoing: string[];
+  } & {
+    [x in ProcessEventDefinition]?: {
+      id: string;
+      name?: string;
+    };
+  })[];
+  endEvent?: ({
+    id: string;
+    name?: string;
+    incoming: string[];
+  } & {
+    [x in ProcessEventDefinition]?: {
+      id: string;
+      name?: string;
+    };
+  })[];
+  boundaryEvent?: ({
+    id: string;
+    name?: string;
+    outgoing: string[];
+    attachedToRef: string;
+  } & {
+    [x in ProcessEventDefinition]?: {
+      id: string;
+      name?: string;
+    };
+  })[];
+} & {
+  task?: {
+    id: string;
+    name?: string;
+    incoming: string[];
+    outgoing: string[];
+  }[];
+} & {
+  [x in 'subProcess' | 'transaction' | 'callActivity']?: ({
+    id: string;
+    name?: string;
+    triggeredByEvent?: boolean;
+  } & Omit<ProcessType, 'isExecutable' | 'laneSet'>)[];
 };

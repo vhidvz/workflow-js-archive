@@ -1,6 +1,6 @@
 export class Element {
-  name?: string;
   id = 'NOT_INITIALIZED';
+  name?: string;
 
   constructor(data?: Partial<Element>) {
     if (data) Object.assign(this, data);
