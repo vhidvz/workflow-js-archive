@@ -11,8 +11,12 @@ export class Token {
     return this.history.pop();
   }
 
-  target(): Element {
+  target(): Element | undefined {
     return this.history[this.history.length - 1];
+  }
+
+  copy(): Token {
+    return new Token(this);
   }
 
   constructor(token?: Partial<Token>) {

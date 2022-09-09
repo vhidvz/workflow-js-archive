@@ -1,11 +1,11 @@
-import { Process as ProcessType } from '../type';
+import { Element } from './base';
 import { Token } from './token';
 
-export class Process {
-  token: Token[] = [];
-  schema: ProcessType = { $_id: 'NOT_INITIALIZED', isExecutable: false };
+export class Process extends Element {
+  token?: { [x: string]: Token };
+  elements?: { [x: string]: Element };
 
   constructor(data?: Partial<Process>) {
-    if (data) Object.assign(this, data);
+    super(data);
   }
 }

@@ -1,6 +1,10 @@
+import { Process } from 'core/process';
+
 export class Element {
   id = 'NOT_INITIALIZED';
   name?: string;
+
+  process?: Process;
 
   static build(): Element {
     return new Element();

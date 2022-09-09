@@ -88,14 +88,19 @@ export type BoundaryEvent = Element & {
   attachedToRef: string;
 } & EventDefinition;
 
+export type Task = Element & {
+  incoming: string | string[];
+  outgoing: string | string[];
+};
+
 export type Process = Element & {
   isExecutable: boolean;
   laneSet?: LaneSet;
+  task?: Task | Task[];
+  endEvent?: EndEvent | EndEvent[];
+  startEvent?: StartEvent | StartEvent[];
   sequenceFlow?: SequenceFlow | SequenceFlow[];
-} & {
-  [x in 'complexGateway' | 'inclusiveGateway' | 'exclusiveGateway']?:
-    | NormalGateway
-    | NormalGateway[];
+  boundaryEvent?: BoundaryEvent | BoundaryEvent[];
 } & {
   [x in 'parallelGateway' | 'eventBasedGateway']?:
     | StrictGateway
@@ -105,16 +110,9 @@ export type Process = Element & {
     | IntermediateEvent
     | IntermediateEvent[];
 } & {
-  startEvent?: StartEvent | StartEvent[];
-  endEvent?: EndEvent | EndEvent[];
-  boundaryEvent?: BoundaryEvent | BoundaryEvent[];
-} & {
-  task?: {
-    id: string;
-    name?: string;
-    incoming: string[];
-    outgoing: string[];
-  }[];
+  [x in 'complexGateway' | 'inclusiveGateway' | 'exclusiveGateway']?:
+    | NormalGateway
+    | NormalGateway[];
 } & {
   [x in 'subProcess' | 'transaction' | 'callActivity']?: ({
     id: string;
