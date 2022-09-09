@@ -31,6 +31,10 @@ export class EventNode extends FlowNode {
   intermediateType?: IntermediateType;
   eventDefinitionType?: EventDefinitionType;
 
+  static build(): EventNode {
+    return new EventNode();
+  }
+
   constructor(data?: Partial<EventNode>) {
     super(data);
   }

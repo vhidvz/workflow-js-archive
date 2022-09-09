@@ -1,13 +1,11 @@
-import { ProcessType } from '../type';
-import { toProcess } from '../utils';
+import { Process as ProcessType } from '../type';
 import { Token } from './token';
 
 export class Process {
-  token: Token;
-  schema: ProcessType;
+  token: Token[] = [];
+  schema: ProcessType = { $_id: 'NOT_INITIALIZED', isExecutable: false };
 
-  constructor(data: ProcessType, token?: Token) {
-    this.schema = toProcess(data);
-    this.token = new Token(token);
+  constructor(data?: Partial<Process>) {
+    if (data) Object.assign(this, data);
   }
 }

@@ -1,18 +1,18 @@
-export type ProcessGateway =
+export type Gateways =
   | 'complexGateway'
   | 'parallelGateway'
   | 'inclusiveGateway'
   | 'exclusiveGateway'
   | 'eventBasedGateway';
 
-export type ProcessEvent =
+export type Events =
   | 'endEvent'
   | 'startEvent'
   | 'boundaryEvent'
   | 'intermediateThrowEvent'
   | 'intermediateCatchEvent';
 
-export type ProcessEventDefinition =
+export type EventDefinitions =
   | 'linkEventDefinition'
   | 'timerEventDefinition'
   | 'errorEventDefinition'
@@ -22,7 +22,7 @@ export type ProcessEventDefinition =
   | 'conditionalEventDefinition'
   | 'compensationEventDefinition';
 
-export type ProcessTask =
+export type Tasks =
   | 'sendTask'
   | 'userTask'
   | 'manualTask'
@@ -31,85 +31,83 @@ export type ProcessTask =
   | 'serviceTask'
   | 'businessTask';
 
-export type ProcessActivity = 'task' | 'subProcess' | 'transaction' | 'callActivity';
+export type Activities = 'task' | 'subProcess' | 'transaction' | 'callActivity';
 
-export type ProcessType = {
-  id: string;
-  name?: string;
+export type Element = {
+  $_id: string;
+  $_name?: string;
+};
+
+export type Lane = Element & {
+  flowNodeRef: string | string[];
+};
+
+export type LaneSet = Element & { lane: Lane | Lane[] };
+
+export type SequenceFlow = Element & {
+  sourceRef: string;
+  targetRef: string;
+};
+
+export type NormalGateway = Element & {
+  default?: string;
+  incoming: string | string[];
+  outgoing: string | string[];
+};
+
+export type StrictGateway = Element & {
+  incoming: string | string[];
+  outgoing: string | string[];
+};
+
+export type EventDefinition =
+  | { linkEventDefinition?: Element }
+  | { timerEventDefinition?: Element }
+  | { errorEventDefinition?: Element }
+  | { signalEventDefinition?: Element }
+  | { messageEventDefinition?: Element }
+  | { escalationEventDefinition?: Element }
+  | { conditionalEventDefinition?: Element }
+  | { compensationEventDefinition?: Element };
+
+export type IntermediateEvent = Element & {
+  incoming: string | string[];
+  outgoing: string | string[];
+} & EventDefinition;
+
+export type StartEvent = Element & {
+  outgoing: string | string[];
+} & EventDefinition;
+
+export type EndEvent = Element & {
+  incoming: string | string[];
+} & EventDefinition;
+
+export type BoundaryEvent = Element & {
+  outgoing: string | string[];
+  attachedToRef: string;
+} & EventDefinition;
+
+export type Process = Element & {
   isExecutable: boolean;
-  laneSet?: {
-    id: string;
-    name?: string;
-    lane: {
-      id: string;
-      name?: string;
-      flowNodeRef: string[];
-    }[];
-  };
-  sequenceFlow?: {
-    id: string;
-    sourceRef: string;
-    targetRef: string;
-  }[];
+  laneSet?: LaneSet;
+  sequenceFlow?: SequenceFlow | SequenceFlow[];
 } & {
-  [x in 'complexGateway' | 'inclusiveGateway' | 'exclusiveGateway']?: {
-    id: string;
-    name?: string;
-    default?: string;
-    incoming: string[];
-    outgoing: string[];
-  }[];
+  [x in 'complexGateway' | 'inclusiveGateway' | 'exclusiveGateway']?:
+    | NormalGateway
+    | NormalGateway[];
 } & {
-  [x in 'parallelGateway' | 'eventBasedGateway']?: {
-    id: string;
-    name?: string;
-    incoming: string[];
-    outgoing: string[];
-  }[];
+  [x in 'parallelGateway' | 'eventBasedGateway']?:
+    | StrictGateway
+    | StrictGateway[];
 } & {
-  [x in 'intermediateThrowEvent' | 'intermediateCatchEvent']?: ({
-    id: string;
-    name?: string;
-    incoming: string[];
-    outgoing: string[];
-  } & {
-    [x in ProcessEventDefinition]?: {
-      id: string;
-      name?: string;
-    };
-  })[];
+  [x in 'intermediateThrowEvent' | 'intermediateCatchEvent']?:
+    | IntermediateEvent
+    | IntermediateEvent[];
 } & {
-  startEvent?: ({
-    id: string;
-    name?: string;
-    outgoing: string[];
-  } & {
-    [x in ProcessEventDefinition]?: {
-      id: string;
-      name?: string;
-    };
-  })[];
-  endEvent?: ({
-    id: string;
-    name?: string;
-    incoming: string[];
-  } & {
-    [x in ProcessEventDefinition]?: {
-      id: string;
-      name?: string;
-    };
-  })[];
-  boundaryEvent?: ({
-    id: string;
-    name?: string;
-    outgoing: string[];
-    attachedToRef: string;
-  } & {
-    [x in ProcessEventDefinition]?: {
-      id: string;
-      name?: string;
-    };
-  })[];
+  startEvent?: StartEvent | StartEvent[];
+  endEvent?: EndEvent | EndEvent[];
+  boundaryEvent?: BoundaryEvent | BoundaryEvent[];
 } & {
   task?: {
     id: string;
@@ -122,5 +120,5 @@ export type ProcessType = {
     id: string;
     name?: string;
     triggeredByEvent?: boolean;
-  } & Omit<ProcessType, 'isExecutable' | 'laneSet'>)[];
+  } & Omit<Process, 'isExecutable' | 'laneSet'>)[];
 };

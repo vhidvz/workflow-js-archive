@@ -3,8 +3,8 @@ import fs from 'fs';
 
 const parser = () =>
   new XMLParser({
-    attributeNamePrefix: '',
     ignoreAttributes: false,
+    attributeNamePrefix: '$_',
     allowBooleanAttributes: true,
   });
 
