@@ -1,5 +1,17 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { XMLParser } from 'fast-xml-parser';
 import fs from 'fs';
+
+const Moddle = require('moddle');
+const { Reader } = require('moddle-xml');
+
+const model = new Moddle();
+
+const reader = new Reader(model);
+const rootHandler = reader.handler('bpmn:Definitions');
+
+export const bpmn = async (xml: string) =>
+  await reader.fromXML(xml, rootHandler);
 
 const parser = () =>
   new XMLParser({

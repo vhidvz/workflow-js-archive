@@ -2356,6 +2356,11 @@ mimic-fn@^2.1.0:
   resolved "https://registry.yarnpkg.com/mimic-fn/-/mimic-fn-2.1.0.tgz#7ed2c2ccccaf84d3ffcb7a69b57711fc2083401b"
   integrity sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==
 
+min-dash@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/min-dash/-/min-dash-4.0.0.tgz#4a1afec4c4d70f510b6e241d0550493d4ac0f161"
+  integrity sha512-piIvVJ/nxuA4+LpnYIzF6oCtRvdtDvQJteSC+H768H2UvPKFKIt5oiJnUVtr0ZdchneXTcvUZ91vIrvWVIN0AA==
+
 minimatch@^3.0.4, minimatch@^3.1.1, minimatch@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.1.2.tgz#19cd194bfd3e428f049a70817c038d89ab4be35b"
@@ -2374,6 +2379,22 @@ minimist@^1.2.6:
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.6.tgz#8637a5b759ea0d6e98702cfb3a9283323c93af44"
   integrity sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==
+
+moddle-xml@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/moddle-xml/-/moddle-xml-10.0.0.tgz#7b0815982b375ece4338258ec86bc6be4f05ed7b"
+  integrity sha512-e5qG0uC9ebHXInLEKW9pZNqcAK7ALCOKmcLw8jmepBPY9BiUZFi+8Th/Cydog3S1rrUXyyo0pqaHaCvc1zt6VA==
+  dependencies:
+    min-dash "^4.0.0"
+    moddle "^6.0.0"
+    saxen "^8.1.2"
+
+moddle@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/moddle/-/moddle-6.0.0.tgz#ccfae6936430e8294a98619bcbefbf1950eeaaa4"
+  integrity sha512-dHYSJpGV0R0X8cJeWWUnE0VqCA0SFP0jZYQtO23EdsBk+MpAgSpdhXadYR6WbHElKroB6XTbifpsWro26UlP6Q==
+  dependencies:
+    min-dash "^4.0.0"
 
 mri@1.1.4:
   version "1.1.4"
@@ -2648,6 +2669,11 @@ safe-buffer@~5.1.1:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.2.tgz#991ec69d296e0313747d59bdfd2b745c35f8828d"
   integrity sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==
+
+saxen@^8.1.2:
+  version "8.1.2"
+  resolved "https://registry.yarnpkg.com/saxen/-/saxen-8.1.2.tgz#e677b32afe93667c9d939d3f3de02e09df108e54"
+  integrity sha512-xUOiiFbc3Ow7p8KMxwsGICPx46ZQvy3+qfNVhrkwfz3Vvq45eGt98Ft5IQaA1R/7Tb5B5MKh9fUR9x3c3nDTxw==
 
 semver@7.x, semver@^7.3.5, semver@^7.3.7:
   version "7.3.7"
