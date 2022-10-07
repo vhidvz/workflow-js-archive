@@ -14,11 +14,11 @@ export class Token {
     return new Token({ history: this.history.map((item) => ({ ...item })) });
   }
 
-  prev(): History | void {
+  pop(): History | void {
     return this.history.pop();
   }
 
-  next(node: FlowNode) {
+  push(node: FlowNode) {
     this.history.push({ $: { ...node.$ }, timestamp: Date.now(), ref: node });
   }
 
