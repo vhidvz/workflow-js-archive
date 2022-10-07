@@ -9,8 +9,10 @@ export type BPMNLane = BPMNElement & {
 export type BPMNLaneSet = BPMNElement & { 'bpmn:lane': BPMNLane[] };
 
 export type BPMNSequenceFlow = BPMNElement & {
-  'bpmn:sourceRef': string;
-  'bpmn:targetRef': string;
+  $: {
+    sourceRef: string;
+    targetRef: string;
+  };
 };
 
 // Gateway elements
@@ -65,7 +67,7 @@ export type BPMNTask = BPMNElement & {
 
 export type BPMNProcess = BPMNElement & {
   'bpmn:isExecutable': boolean;
-  'bpmn:laneSet'?: BPMNLaneSet;
+  'bpmn:laneSet'?: [BPMNLaneSet];
   'bpmn:task'?: BPMNTask[];
   'bpmn:endEvent'?: BPMNEndEvent[];
   'bpmn:startEvent'?: BPMNStartEvent[];

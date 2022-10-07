@@ -3,17 +3,17 @@ import { Token } from './token';
 import { Lane } from './lane';
 
 export class Process extends Element {
-  static #processes: { [name: string]: Process };
+  static $processes: { [id: string]: Process } = {};
 
   lanes: Lane[] = [];
   token: Token[] = [];
 
   constructor(data?: Partial<Process>) {
     super(data);
-    Process.#processes[data?.$?.name || data?.$?.id || 'Default'] = this;
+    Process.$processes[this.$.id] = this;
   }
 
-  static find(name: string): Process {
-    return Process.#processes[name];
+  static find(id: string): Process {
+    return Process.$processes[id];
   }
 }

@@ -1,17 +1,17 @@
 import { FlowNode } from './flow-node';
 import { Property } from './base';
 
-export type History = (Property & { timestamp: number; ref: FlowNode })[];
+export type History = Property & { timestamp: number; ref: FlowNode };
 
 export class Token {
-  history: History = [];
+  history: History[] = [];
 
   get node(): FlowNode {
-    return this.history[this.history.length - 1];
+    return this.history[this.history.length - 1].ref;
   }
 
-  prev(): FlowNode {
-    return this.history.pop()?.ref ?? { $: { id: 'NOT_FOUND' } };
+  prev(): History | void {
+    return this.history.pop();
   }
 
   next(node: FlowNode) {

@@ -14,7 +14,7 @@ export interface GatewayInfo {
 }
 
 export class GatewayNode extends NodeProperty implements GatewayInfo {
-  type: GatewayType = GatewayType.Complex;
+  type!: GatewayType;
 
   constructor(data?: Partial<GatewayNode>) {
     super(data);

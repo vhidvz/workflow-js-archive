@@ -34,7 +34,7 @@ export interface EventInfo {
 }
 
 export class EventNode extends NodeProperty implements EventInfo {
-  type: EventType = EventType.Start;
+  type!: EventType;
 
   attachedToRef?: ActivityNode;
   intermediateType?: IntermediateType;

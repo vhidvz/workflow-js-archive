@@ -2,20 +2,20 @@ import { Property, Sequence } from './base';
 import { BPMNActivity } from '../type';
 
 export class NodeProperty extends Property {
-  incoming?: Sequence[];
-  outgoing?: Sequence[];
+  incoming!: Sequence[];
+  outgoing!: Sequence[];
 }
 
 export class FlowNode extends NodeProperty {
-  static #nodes: { [name: string]: FlowNode };
+  static $nodes: { [id: string]: FlowNode } = {};
 
   constructor(data?: Partial<FlowNode>) {
     super(data);
-    FlowNode.#nodes[data?.$?.name || data?.$?.id || 'Default'] = this;
+    FlowNode.$nodes[this.$.id] = this;
   }
 
-  static find(name: string): FlowNode {
-    return FlowNode.#nodes[name];
+  static find(id: string): FlowNode {
+    return FlowNode.$nodes[id];
   }
 
   static build(el: BPMNActivity): FlowNode {

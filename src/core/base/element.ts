@@ -1,9 +1,7 @@
-import { $ as BPMNElement } from '../../type';
+import { BPMNElement } from '../../type';
 
 export class Property {
-  $: { id: string; name?: string } = {
-    id: 'NOT_INITIALIZED',
-  };
+  $!: { id: string; name?: string };
 
   constructor(data?: Partial<Property>) {
     if (data) Object.assign(this, data);
@@ -11,18 +9,18 @@ export class Property {
 }
 
 export class Element extends Property {
-  static #elements: { [id: string]: Element };
+  static $elements: { [id: string]: Element } = {};
 
   constructor(data?: Partial<Element>) {
     super(data);
-    Element.#elements[this.$.id] = this;
+    Element.$elements[this.$.id] = this;
   }
 
   static find(id: string): Element {
-    return Element.#elements[id];
+    return Element.$elements[id];
   }
 
   static build(el: BPMNElement): Element {
-    return new Element({ $: el });
+    return new Element(el);
   }
 }

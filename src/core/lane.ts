@@ -3,13 +3,13 @@ import { BPMNLane } from '../type';
 import { Property } from './base';
 
 export class Lane extends Property {
-  static #lanes: Lane[];
+  static $lanes: { [id: string]: Lane } = {};
 
-  flowNodeRef: FlowNode[] = [];
+  flowNodeRef!: FlowNode[];
 
   constructor(data?: Partial<Lane>) {
     super(data);
-    Lane.#lanes.push(this);
+    Lane.$lanes[this.$.id] = this;
   }
 
   static build(el: BPMNLane) {

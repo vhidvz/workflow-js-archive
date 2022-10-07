@@ -24,7 +24,7 @@ export interface ActivityInfo {
 }
 
 export class ActivityNode extends NodeProperty implements ActivityInfo {
-  type: ActivityType = ActivityType.Task;
+  type!: ActivityType;
 
   taskType?: TaskType;
 
