@@ -1,5 +1,6 @@
+import { FlowNode, NodeProperty } from '../flow-node';
 import { ActivityNode } from './activity';
-import { FlowNode } from '../flow-node';
+import { BPMNEvent } from '../../type';
 
 export enum EventType {
   End = 'end',
@@ -24,18 +25,32 @@ export enum EventDefinitionType {
   Compensation = 'compensation',
 }
 
-export class EventNode extends FlowNode {
+export interface EventInfo {
+  type: EventType;
+
+  attachedToRef?: ActivityNode;
+  intermediateType?: IntermediateType;
+  eventDefinitionType?: EventDefinitionType;
+}
+
+export class EventNode extends NodeProperty implements EventInfo {
   type: EventType = EventType.Start;
 
   attachedToRef?: ActivityNode;
   intermediateType?: IntermediateType;
   eventDefinitionType?: EventDefinitionType;
 
-  static build(): EventNode {
-    return new EventNode();
-  }
-
   constructor(data?: Partial<EventNode>) {
     super(data);
+  }
+
+  static build(el: BPMNEvent, info: EventInfo) {
+    if ('bpmn:attachedToRef' in el && !!info.attachedToRef)
+      info.attachedToRef = new ActivityNode(FlowNode.find(el['bpmn:attachedToRef']));
+
+    return new EventNode({
+      ...FlowNode.build(el),
+      ...info,
+    });
   }
 }

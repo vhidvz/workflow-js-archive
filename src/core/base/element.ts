@@ -1,16 +1,28 @@
-import { Process } from 'core/process';
+import { $ as BPMNElement } from '../../type';
 
-export class Element {
-  id = 'NOT_INITIALIZED';
-  name?: string;
+export class Property {
+  $: { id: string; name?: string } = {
+    id: 'NOT_INITIALIZED',
+  };
 
-  process?: Process;
-
-  static build(): Element {
-    return new Element();
+  constructor(data?: Partial<Property>) {
+    if (data) Object.assign(this, data);
   }
+}
+
+export class Element extends Property {
+  static #elements: { [id: string]: Element };
 
   constructor(data?: Partial<Element>) {
-    if (data) Object.assign(this, data);
+    super(data);
+    Element.#elements[this.$.id] = this;
+  }
+
+  static find(id: string): Element {
+    return Element.#elements[id];
+  }
+
+  static build(el: BPMNElement): Element {
+    return new Element({ $: el });
   }
 }

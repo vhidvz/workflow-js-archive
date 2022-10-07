@@ -1,4 +1,5 @@
-import { FlowNode } from '../flow-node';
+import { FlowNode, NodeProperty } from '../flow-node';
+import { BPMNGateway } from '../../type';
 
 export enum GatewayType {
   Complex = 'complex',
@@ -8,10 +9,21 @@ export enum GatewayType {
   EventBased = 'eventBased',
 }
 
-export class GatewayNode extends FlowNode {
+export interface GatewayInfo {
+  type: GatewayType;
+}
+
+export class GatewayNode extends NodeProperty implements GatewayInfo {
   type: GatewayType = GatewayType.Complex;
 
-  constructor(data?: GatewayNode) {
+  constructor(data?: Partial<GatewayNode>) {
     super(data);
+  }
+
+  static build(el: BPMNGateway, info: GatewayInfo) {
+    return new GatewayNode({
+      ...FlowNode.build(el),
+      ...info,
+    });
   }
 }

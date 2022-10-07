@@ -1,122 +1,91 @@
-export type Gateways =
-  | 'complexGateway'
-  | 'parallelGateway'
-  | 'inclusiveGateway'
-  | 'exclusiveGateway'
-  | 'eventBasedGateway';
+import { BPMNElement, BPMNTaskType } from './base';
 
-export type Events =
-  | 'endEvent'
-  | 'startEvent'
-  | 'boundaryEvent'
-  | 'intermediateThrowEvent'
-  | 'intermediateCatchEvent';
+// Basic elements
 
-export type EventDefinitions =
-  | 'linkEventDefinition'
-  | 'timerEventDefinition'
-  | 'errorEventDefinition'
-  | 'signalEventDefinition'
-  | 'messageEventDefinition'
-  | 'escalationEventDefinition'
-  | 'conditionalEventDefinition'
-  | 'compensationEventDefinition';
-
-export type Tasks =
-  | 'sendTask'
-  | 'userTask'
-  | 'manualTask'
-  | 'scriptTask'
-  | 'receiveTask'
-  | 'serviceTask'
-  | 'businessTask';
-
-export type Activities = 'task' | 'subProcess' | 'transaction' | 'callActivity';
-
-export type Element = {
-  $_id: string;
-  $_name?: string;
+export type BPMNLane = BPMNElement & {
+  'bpmn:flowNodeRef': string[];
 };
 
-export type Lane = Element & {
-  flowNodeRef: string | string[];
+export type BPMNLaneSet = BPMNElement & { 'bpmn:lane': BPMNLane[] };
+
+export type BPMNSequenceFlow = BPMNElement & {
+  'bpmn:sourceRef': string;
+  'bpmn:targetRef': string;
 };
 
-export type LaneSet = Element & { lane: Lane | Lane[] };
+// Gateway elements
 
-export type SequenceFlow = Element & {
-  sourceRef: string;
-  targetRef: string;
+export type BPMNNormalGateway = BPMNElement & {
+  'bpmn:default'?: string;
+  'bpmn:incoming': string[];
+  'bpmn:outgoing': string[];
 };
 
-export type NormalGateway = Element & {
-  default?: string;
-  incoming: string | string[];
-  outgoing: string | string[];
+export type BPMNStrictGateway = BPMNElement & {
+  'bpmn:incoming': string[];
+  'bpmn:outgoing': string[];
 };
 
-export type StrictGateway = Element & {
-  incoming: string | string[];
-  outgoing: string | string[];
+// Event elements
+
+export type BPMNEventDefinition =
+  | { 'bpmn:linkEventDefinition'?: [BPMNElement] }
+  | { 'bpmn:timerEventDefinition'?: [BPMNElement] }
+  | { 'bpmn:errorEventDefinition'?: [BPMNElement] }
+  | { 'bpmn:signalEventDefinition'?: [BPMNElement] }
+  | { 'bpmn:messageEventDefinition'?: [BPMNElement] }
+  | { 'bpmn:escalationEventDefinition'?: [BPMNElement] }
+  | { 'bpmn:conditionalEventDefinition'?: [BPMNElement] }
+  | { 'bpmn:compensationEventDefinition'?: [BPMNElement] };
+
+export type BPMNIntermediateEvent = BPMNElement & {
+  'bpmn:incoming': string[];
+  'bpmn:outgoing': string[];
+} & BPMNEventDefinition;
+
+export type BPMNBoundaryEvent = BPMNElement & {
+  'bpmn:outgoing': string[];
+  'bpmn:attachedToRef': string;
+} & BPMNEventDefinition;
+
+export type BPMNStartEvent = BPMNElement & {
+  'bpmn:outgoing': string[];
+} & BPMNEventDefinition;
+
+export type BPMNEndEvent = BPMNElement & {
+  'bpmn:incoming': string[];
+} & BPMNEventDefinition;
+
+// Main elements
+
+export type BPMNTask = BPMNElement & {
+  'bpmn:incoming': string[];
+  'bpmn:outgoing': string[];
 };
 
-export type EventDefinition =
-  | { linkEventDefinition?: Element }
-  | { timerEventDefinition?: Element }
-  | { errorEventDefinition?: Element }
-  | { signalEventDefinition?: Element }
-  | { messageEventDefinition?: Element }
-  | { escalationEventDefinition?: Element }
-  | { conditionalEventDefinition?: Element }
-  | { compensationEventDefinition?: Element };
-
-export type IntermediateEvent = Element & {
-  incoming: string | string[];
-  outgoing: string | string[];
-} & EventDefinition;
-
-export type StartEvent = Element & {
-  outgoing: string | string[];
-} & EventDefinition;
-
-export type EndEvent = Element & {
-  incoming: string | string[];
-} & EventDefinition;
-
-export type BoundaryEvent = Element & {
-  outgoing: string | string[];
-  attachedToRef: string;
-} & EventDefinition;
-
-export type Task = Element & {
-  incoming: string | string[];
-  outgoing: string | string[];
-};
-
-export type Process = Element & {
-  isExecutable: boolean;
-  laneSet?: LaneSet;
-  task?: Task | Task[];
-  endEvent?: EndEvent | EndEvent[];
-  startEvent?: StartEvent | StartEvent[];
-  sequenceFlow?: SequenceFlow | SequenceFlow[];
-  boundaryEvent?: BoundaryEvent | BoundaryEvent[];
+export type BPMNProcess = BPMNElement & {
+  'bpmn:isExecutable': boolean;
+  'bpmn:laneSet'?: BPMNLaneSet;
+  'bpmn:task'?: BPMNTask[];
+  'bpmn:endEvent'?: BPMNEndEvent[];
+  'bpmn:startEvent'?: BPMNStartEvent[];
+  'bpmn:sequenceFlow'?: BPMNSequenceFlow[];
+  'bpmn:boundaryEvent'?: BPMNBoundaryEvent[];
 } & {
-  [x in 'parallelGateway' | 'eventBasedGateway']?:
-    | StrictGateway
-    | StrictGateway[];
+  [x in BPMNTaskType]?: BPMNTask[];
 } & {
-  [x in 'intermediateThrowEvent' | 'intermediateCatchEvent']?:
-    | IntermediateEvent
-    | IntermediateEvent[];
+  [x in 'bpmn:parallelGateway' | 'bpmn:eventBasedGateway']?: BPMNStrictGateway[];
 } & {
-  [x in 'complexGateway' | 'inclusiveGateway' | 'exclusiveGateway']?:
-    | NormalGateway
-    | NormalGateway[];
+  [x in
+    | 'bpmn:intermediateThrowEvent'
+    | 'bpmn:intermediateCatchEvent']?: BPMNIntermediateEvent[];
 } & {
-  [x in 'subProcess' | 'transaction' | 'callActivity']?: ({
-    id: string;
-    name?: string;
-    triggeredByEvent?: boolean;
-  } & Omit<Process, 'isExecutable' | 'laneSet'>)[];
+  [x in
+    | 'bpmn:complexGateway'
+    | 'bpmn:inclusiveGateway'
+    | 'bpmn:exclusiveGateway']?: BPMNNormalGateway[];
+} & {
+  [x in 'bpmn:subProcess' | 'bpmn:transaction' | 'bpmn:callActivity']?: (BPMNElement & {
+    'bpmn:triggeredByEvent'?: boolean;
+  } & Omit<BPMNProcess, 'bpmn:isExecutable' | 'bpmn:laneSet'>)[];
 };

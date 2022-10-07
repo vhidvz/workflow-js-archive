@@ -1,22 +1,25 @@
-import { Element } from './base';
+import { FlowNode } from './flow-node';
+import { Property } from './base';
+
+export type History = (Property & { timestamp: number; ref: FlowNode })[];
 
 export class Token {
-  history: Element[] = [];
+  history: History = [];
 
-  push(el: Element): number {
-    return this.history.push(el);
-  }
-
-  pop(): Element | undefined {
-    return this.history.pop();
-  }
-
-  target(): Element | undefined {
+  get node(): FlowNode {
     return this.history[this.history.length - 1];
   }
 
+  prev(): FlowNode {
+    return this.history.pop()?.ref ?? { $: { id: 'NOT_FOUND' } };
+  }
+
+  next(node: FlowNode) {
+    this.history.push({ $: node.$, timestamp: Date.now(), ref: node });
+  }
+
   copy(): Token {
-    return new Token(this);
+    return new Token({ history: this.history.map((item) => ({ ...item })) });
   }
 
   constructor(token?: Partial<Token>) {

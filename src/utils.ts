@@ -1,43 +1,25 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-import { XMLParser } from 'fast-xml-parser';
+import { BPMNCollaboration, BPMNDefinition, BPMNProcess, BPMNSchema } from './type';
+
+import { parseString } from 'xml2js';
+import { find } from 'xml2js-xpath';
+
 import fs from 'fs';
 
-const Moddle = require('moddle');
-const { Reader } = require('moddle-xml');
+export const readFile = (path: string): string => fs.readFileSync(path, 'utf8');
 
-const model = new Moddle();
-
-const reader = new Reader(model);
-const rootHandler = reader.handler('bpmn:Definitions');
-
-export const bpmn = async (xml: string) =>
-  await reader.fromXML(xml, rootHandler);
-
-const parser = () =>
-  new XMLParser({
-    ignoreAttributes: false,
-    attributeNamePrefix: '$_',
-    allowBooleanAttributes: true,
+export const parse = (xml: string): BPMNSchema => {
+  let parse;
+  parseString(xml, { async: false }, (err, result) => {
+    if (err) throw err;
+    parse = result;
   });
 
-export function getProcessFromFile(path: string) {
-  let data = fs.readFileSync(path, 'utf8');
-  data = data.split('bpmn:').join('');
-  return parser().parse(data)?.definitions?.process ?? null;
-}
+  if (!parse) throw new Error('Input string is not parsable');
 
-export function getProcessFromString(str: string) {
-  str = str.split('bpmn:').join('');
-  return parser().parse(str)?.definitions?.process ?? null;
-}
+  return parse;
+};
 
-export function toProcess(obj: any, exclude?: string[]) {
-  if (typeof obj === 'object')
-    for (const key in obj) {
-      if (exclude?.includes(key)) continue;
-
-      obj[key] = toProcess(Array.isArray(obj[key]) ? obj[key] : [obj[key]]);
-    }
-
-  return obj;
-}
+export const processes = (obj: BPMNSchema | BPMNDefinition): BPMNProcess[] =>
+  find(obj, '//bpmn:process');
+export const collaborations = (obj: BPMNSchema | BPMNDefinition): BPMNCollaboration[] =>
+  find(obj, '//bpmn:collaboration');
