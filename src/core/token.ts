@@ -10,16 +10,16 @@ export class Token {
     return this.history[this.history.length - 1].ref;
   }
 
+  copy(): Token {
+    return new Token({ history: this.history.map((item) => ({ ...item })) });
+  }
+
   prev(): History | void {
     return this.history.pop();
   }
 
   next(node: FlowNode) {
-    this.history.push({ $: node.$, timestamp: Date.now(), ref: node });
-  }
-
-  copy(): Token {
-    return new Token({ history: this.history.map((item) => ({ ...item })) });
+    this.history.push({ $: { ...node.$ }, timestamp: Date.now(), ref: node });
   }
 
   constructor(token?: Partial<Token>) {
