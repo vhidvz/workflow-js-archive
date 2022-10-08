@@ -21,6 +21,6 @@ export class Element extends Property {
   }
 
   static build(el: BPMNElement): Element {
-    return new Element(el);
+    return Element.$elements[el.$.id] ?? new Element(el);
   }
 }

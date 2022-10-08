@@ -45,9 +45,6 @@ export class EventNode extends NodeProperty implements EventInfo {
   }
 
   static build(el: BPMNEvent, info: EventInfo) {
-    if ('bpmn:attachedToRef' in el && !!info.attachedToRef)
-      info.attachedToRef = new ActivityNode(FlowNode.find(el['bpmn:attachedToRef']));
-
     return new EventNode({
       ...FlowNode.build(el),
       ...info,

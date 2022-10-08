@@ -1,16 +1,12 @@
-import { Element } from './base';
-import { Token } from './token';
-import { Lane } from './lane';
+import { Property } from './base';
 
-export class Process extends Element {
+export class Process extends Property {
   static $processes: { [id: string]: Process } = {};
-
-  lanes: Lane[] = [];
-  token: Token[] = [];
 
   constructor(data?: Partial<Process>) {
     super(data);
     Process.$processes[this.$.id] = this;
+    if (this.$.name) Process.$processes[this.$.name] = this;
   }
 
   static find(id: string): Process {
