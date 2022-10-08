@@ -1,10 +1,10 @@
 import { FlowNode } from './flow-node';
 import { Property } from './base';
 
-export type History = Property & { timestamp: number; ref: FlowNode };
+export type Sate = Property & { timestamp: number; ref: FlowNode };
 
 export class Token {
-  history: History[] = [];
+  history: Sate[] = [];
 
   get node(): FlowNode {
     return this.history[this.history.length - 1].ref;
@@ -14,7 +14,7 @@ export class Token {
     return new Token({ history: this.history.map((item) => ({ ...item })) });
   }
 
-  pop(): History | void {
+  pop(): Sate | void {
     return this.history.pop();
   }
 
