@@ -1,7 +1,5 @@
-import { BPMNCollaboration, BPMNDefinition, BPMNProcess, BPMNSchema } from './type';
-
+import { BPMNSchema } from './type';
 import { parseString } from 'xml2js';
-import { find } from 'xml2js-xpath';
 
 import fs from 'fs';
 
@@ -18,8 +16,3 @@ export const parse = (xml: string): BPMNSchema => {
 
   return parse;
 };
-
-export const processes = (obj: BPMNSchema | BPMNDefinition): BPMNProcess[] =>
-  find(obj, '//bpmn:process');
-export const collaborations = (obj: BPMNSchema | BPMNDefinition): BPMNCollaboration[] =>
-  find(obj, '//bpmn:collaboration');

@@ -30,6 +30,11 @@
     "workflow"
   ],
   "homepage": "https://github.com/vhidvz/workflow-js#readme",
+  "dependencies": {
+    "xml2js": "^0.4.23",
+    "xml2js-xpath": "^0.13.0",
+    "reflect-metadata": "^0.1.13"
+  },
   "devDependencies": {
     "@types/jest": "^29.1.2",
     "@types/xml2js": "^0.4.11",
@@ -55,9 +60,5 @@
   },
   "files": [
     "/dist"
-  ],
-  "dependencies": {
-    "xml2js": "^0.4.23",
-    "xml2js-xpath": "^0.13.0"
-  }
+  ]
 }

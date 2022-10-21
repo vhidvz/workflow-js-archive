@@ -1,13 +1,14 @@
 import { FlowNode } from './flow-node';
 import { Property } from './base';
 
-export type Sate = Property & { timestamp: number; ref: FlowNode };
+export type Sate = Property & { timestamp: number; value?: unknown; ref: FlowNode };
 
 export class Token {
+  data: unknown = {};
   history: Sate[] = [];
 
-  get node(): FlowNode {
-    return this.history[this.history.length - 1].ref;
+  get state(): Sate {
+    return this.history[this.history.length - 1];
   }
 
   copy(): Token {
