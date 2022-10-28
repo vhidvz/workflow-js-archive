@@ -1,25 +1,28 @@
-import { FlowNode } from './flow-node';
-import { Property } from './base';
+import { Element, Property } from './base';
 
-export type Sate = Property & { timestamp: number; value?: unknown; ref: FlowNode };
+export type Sate = Property & { timestamp: number; value?: unknown; ref: Element };
 
 export class Token {
+  ref?: Token;
   data: unknown = {};
   history: Sate[] = [];
+  chields: Token[] = [];
 
   get state(): Sate {
     return this.history[this.history.length - 1];
   }
 
-  copy(): Token {
-    return new Token({ history: this.history.map((item) => ({ ...item })) });
+  new(): Token {
+    const token = new Token({ ref: this });
+    this.chields.push(token);
+    return token;
   }
 
   pop(): Sate | void {
     return this.history.pop();
   }
 
-  push(node: FlowNode) {
+  push(node: Element) {
     this.history.push({ $: { ...node.$ }, timestamp: Date.now(), ref: node });
   }
 

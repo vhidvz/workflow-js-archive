@@ -14,7 +14,7 @@
     "clean": "rm -rf ./lib && rm -rf ./coverage",
     "lint": "eslint . '*/**/*.{js,ts}' --quiet --fix",
     "format": "prettier --write \"(src|test)/**/*.(ts|js)\"",
-    "start:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register src/index.ts",
+    "start:example1": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register example/example_01.ts",
     "test": "jest && make-coverage-badge --report-path docs/coverage/coverage-summary.json --output-path coverage-badge.svg"
   },
   "repository": {
@@ -31,9 +31,10 @@
   ],
   "homepage": "https://github.com/vhidvz/workflow-js#readme",
   "dependencies": {
+    "jsonpath-plus": "^7.2.0",
+    "reflect-metadata": "^0.1.13",
     "xml2js": "^0.4.23",
-    "xml2js-xpath": "^0.13.0",
-    "reflect-metadata": "^0.1.13"
+    "xml2js-xpath": "^0.13.0"
   },
   "devDependencies": {
     "@types/jest": "^29.1.2",

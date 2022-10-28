@@ -1,17 +1,13 @@
-import { Default, DefineProcess, DefineStart } from './common';
+import { Metadata, Option } from './common';
+import { Token } from './core';
 
 export * from './core';
 export * from './type';
 export * from './utils';
 export * from './common';
 
-@DefineProcess(Default, {
-  name: 'Pizza Customer',
-  path: './example/supplying-pizza.bpmn',
-})
-export class PizzaCustomer {
-  @DefineStart({ name: '' })
-  public hungryForPizza() {
-    return;
-  }
+export class WorkflowJS {
+  $__metadata__!: Metadata;
+
+  public run(options?: { node?: Option; value?: any; token?: Token }) {}
 }

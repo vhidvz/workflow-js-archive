@@ -1,4 +1,4 @@
-import { FlowNode, NodeProperty } from '../flow-node';
+import { Property, Sequence } from '../../core/base';
 import { BPMNActivity } from '../../type';
 
 export enum TaskType {
@@ -23,9 +23,13 @@ export interface ActivityInfo {
   taskType?: TaskType;
 }
 
-export class ActivityNode extends NodeProperty implements ActivityInfo {
-  type!: ActivityType;
+export class ActivityNode extends Property {
+  default?: Element;
+  incoming?: Sequence[];
+  outgoing?: Sequence[];
+  attachedToRef?: Element;
 
+  type!: ActivityType;
   taskType?: TaskType;
 
   constructor(data?: Partial<ActivityNode>) {

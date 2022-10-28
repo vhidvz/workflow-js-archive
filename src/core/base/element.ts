@@ -9,18 +9,11 @@ export class Property {
 }
 
 export class Element extends Property {
-  static $elements: { [id: string]: Element } = {};
-
   constructor(data?: Partial<Element>) {
     super(data);
-    Element.$elements[this.$.id] = this;
-  }
-
-  static find(id: string): Element {
-    return Element.$elements[id];
   }
 
   static build(el: BPMNElement): Element {
-    return Element.$elements[el.$.id] ?? new Element(el);
+    return new Element(el);
   }
 }
