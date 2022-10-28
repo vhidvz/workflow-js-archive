@@ -1,7 +1,7 @@
-import { Element, Property } from './element';
+import { Element, Attribute } from './element';
 import { BPMNSequenceFlow } from '../../type';
 
-export class Sequence extends Property {
+export class Sequence extends Attribute {
   sourceRef!: Element;
   targetRef!: Element;
 

@@ -1,9 +1,9 @@
-import { DefineOption, Metadata } from '../types';
+import { DefineOption, Metadata, Option } from '../types';
 import { parse, readFile } from '../../utils';
 import { Definition } from '../../core';
 import 'reflect-metadata';
 
-export function DefineProcess(options: DefineOption, id?: string | symbol) {
+export function DefineProcess(options: DefineOption | Option, id?: string | symbol) {
   if ('path' in options)
     Definition.add(parse(readFile(options.path))['bpmn:definitions'], id);
 

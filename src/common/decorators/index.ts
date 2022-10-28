@@ -1,2 +1,2 @@
 export * from './process';
-export * from './node';
+export * from './method';

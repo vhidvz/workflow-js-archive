@@ -1,7 +1,7 @@
-import { Element, Property } from './base';
+import { Element, Attribute } from './base';
 import { BPMNLane } from '../type';
 
-export class Lane extends Property {
+export class Lane extends Attribute {
   flowNodeRef!: Element[];
 
   constructor(data?: Partial<Lane>) {

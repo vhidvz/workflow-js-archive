@@ -1,5 +1,4 @@
-import { Property, Sequence } from '../../core/base';
-import { BPMNActivity } from '../../type';
+import { Element, Attribute } from '../../core/base';
 
 export enum TaskType {
   Send = 'send',
@@ -23,11 +22,9 @@ export interface ActivityInfo {
   taskType?: TaskType;
 }
 
-export class ActivityNode extends Property {
-  default?: Element;
-  incoming?: Sequence[];
-  outgoing?: Sequence[];
-  attachedToRef?: Element;
+export class ActivityNode extends Attribute implements ActivityInfo {
+  incoming!: () => Element[];
+  outgoing!: () => Element[];
 
   type!: ActivityType;
   taskType?: TaskType;
@@ -36,10 +33,12 @@ export class ActivityNode extends Property {
     super(data);
   }
 
-  static build(el: BPMNActivity, info: ActivityInfo) {
-    return new ActivityNode({
-      ...FlowNode.build(el),
-      ...info,
-    });
+  static build(
+    el: Element,
+    info: ActivityInfo,
+    incoming: () => Element[],
+    outgoing: () => Element[],
+  ) {
+    return Object.assign(el, { ...info, incoming, outgoing });
   }
 }

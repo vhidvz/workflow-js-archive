@@ -1,10 +1,10 @@
-import { BPMNDefinition } from '../type';
-import { Default } from '../common';
-import { Process } from './process';
 import { Collaboration } from './collaboration';
+import { Default, Option } from '../common';
+import { BPMNDefinition } from '../type';
+import { Process } from './process';
 
 export class Definition {
-  processes: { [id: string]: Process } = {};
+  processes: { [id: string | symbol]: Process } = {};
   collaborations: { [id: string]: Collaboration } = {};
 
   constructor(data?: Partial<Definition>) {
@@ -39,43 +39,17 @@ export class Definition {
     delete Definition.definitions[id];
   }
 
-  // public static getProcess(id: string | symbol, params: Params): BPMNProcess | void {
-  //   const definition = Definition.definitions[id];
+  public static getProcess(option: Option, id: string | symbol = Default): Process {
+    const definition = Definition.definitions[id];
 
-  //   if (!definition) throw new Error('Definition not found');
+    if (!definition) throw new Error('Definition not found');
 
-  //   const findProcessById = (_id: string): BPMNProcess =>
-  //     find(definition, `//bpmn:process[@id='${_id}']`).pop();
+    let process!: Process;
+    if ('name' in option) process = definition.processes[option.name];
+    else if ('id' in option) process = definition.processes[option.id];
 
-  //   if ('id' in params) return findProcessById(params.id.toString());
+    if (!process) throw new Error('Process not found');
 
-  //   if ('name' in params) {
-  //     const participant: BPMNParticipant = find(
-  //       definition,
-  //       `//bpmn:participant[@name='${params.name}']`,
-  //     ).pop();
-
-  //     if (!participant) throw new Error('Process not found');
-
-  //     return findProcessById(participant.$.processRef);
-  //   }
-  // }
-
-  // public static getFlowNode(metadata: Metadata, params: Params): FlowNode | void {
-  //   const process = Definition.getProcess(metadata.definition.id, metadata.process);
-
-  //   if (!process) throw new Error('Process not found');
-
-  //   if ('id' in params)
-  //     return JSONPath({
-  //       path: `$..[?(@.name==="${params.id.toString()}")]^`,
-  //       json: process,
-  //     }).pop();
-
-  //   if ('name' in params)
-  //     return JSONPath({
-  //       path: `$..[?(@.name==="${params.name}")]^^`,
-  //       json: process,
-  //     }).pop();
-  // }
+    return process;
+  }
 }

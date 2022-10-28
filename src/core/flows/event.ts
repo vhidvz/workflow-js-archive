@@ -1,6 +1,4 @@
-import { FlowNode, NodeProperty } from '../flow-node';
-import { ActivityNode } from './activity';
-import { BPMNEvent } from '../../type';
+import { Element, Attribute } from '../../core/base';
 
 export enum EventType {
   End = 'end',
@@ -27,27 +25,40 @@ export enum EventDefinitionType {
 
 export interface EventInfo {
   type: EventType;
-
-  attachedToRef?: ActivityNode;
   intermediateType?: IntermediateType;
-  eventDefinitionType?: EventDefinitionType;
 }
 
-export class EventNode extends NodeProperty implements EventInfo {
-  type!: EventType;
+export class EventNode extends Attribute implements EventInfo {
+  incoming?: () => Element[];
+  outgoing?: () => Element[];
+  attachedToRef?: () => Element;
 
-  attachedToRef?: ActivityNode;
+  type!: EventType;
   intermediateType?: IntermediateType;
-  eventDefinitionType?: EventDefinitionType;
+
+  get eventDefinitionType(): EventDefinitionType | undefined {
+    if ('bpmn:linkEventDefinition' in this) return EventDefinitionType.Link;
+    if ('bpmn:timerEventDefinition' in this) return EventDefinitionType.Timer;
+    if ('bpmn:errorEventDefinition' in this) return EventDefinitionType.Error;
+    if ('bpmn:signalEventDefinition' in this) return EventDefinitionType.Signal;
+    if ('bpmn:messageEventDefinition' in this) return EventDefinitionType.Message;
+    if ('bpmn:escalationEventDefinition' in this) return EventDefinitionType.Escalation;
+    if ('bpmn:conditionalEventDefinition' in this) return EventDefinitionType.Conditional;
+    if ('bpmn:compensationEventDefinition' in this)
+      return EventDefinitionType.Compensation;
+  }
 
   constructor(data?: Partial<EventNode>) {
     super(data);
   }
 
-  static build(el: BPMNEvent, info: EventInfo) {
-    return new EventNode({
-      ...FlowNode.build(el),
-      ...info,
-    });
+  static build(
+    el: Element,
+    info: EventInfo,
+    incoming?: () => Element[],
+    outgoing?: () => Element[],
+    attachedToRef?: () => Element,
+  ) {
+    return Object.assign(el, { ...info, incoming, outgoing, attachedToRef });
   }
 }

@@ -1,14 +1,14 @@
 import { BPMNElement } from '../../type';
 
-export class Property {
+export class Attribute {
   $!: { id: string; name?: string };
 
-  constructor(data?: Partial<Property>) {
+  constructor(data?: Partial<Attribute>) {
     if (data) Object.assign(this, data);
   }
 }
 
-export class Element extends Property {
+export class Element extends Attribute {
   constructor(data?: Partial<Element>) {
     super(data);
   }

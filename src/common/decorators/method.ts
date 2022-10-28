@@ -1,6 +1,6 @@
 import { Metadata, NodeOption, Option, ParamType } from '../types';
 import { NodeKey, ParamKey } from '../keys';
-import { Token } from '../../core';
+import { Definition, Token } from '../../core';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -8,11 +8,13 @@ import { Token } from '../../core';
 
 import 'reflect-metadata';
 
+export type MethodOptions = { node: Option; token: Token; value?: any };
+
 export function Param(type: ParamType) {
   return function (target: any, propertyKey: string | symbol, parameterIndex: number) {
     const params = Reflect.getOwnMetadata(ParamKey, target, propertyKey) ?? [];
 
-    params.splice(parameterIndex, type);
+    params.unshift({ parameterIndex, type });
 
     Reflect.defineMetadata(ParamKey, params, target, propertyKey);
   };
@@ -20,11 +22,17 @@ export function Param(type: ParamType) {
 
 export function Node(options: Option & NodeOption) {
   return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata(NodeKey, options, target, propertyName);
+    const nodes = Reflect.getOwnMetadata(NodeKey, target, '$__metadata__') ?? {};
+
+    if ('name' in options) nodes[options.name] = { options, propertyName };
+    else if ('id' in options) nodes[options.id] = { options, propertyName };
+
+    Reflect.defineMetadata(NodeKey, nodes, target, '$__metadata__');
 
     const method = descriptor.value!;
-    descriptor.value = function ({ token, value }: { token: Token; value?: any }) {
-      const params: ParamType[] = Reflect.getOwnMetadata(ParamKey, target, propertyName);
+    descriptor.value = function ({ node, token, value }: MethodOptions) {
+      const params: { parameterIndex: number; type: ParamType }[] =
+        Reflect.getOwnMetadata(ParamKey, target, propertyName);
 
       if (params.length) {
         const args: any[] = [];
@@ -32,10 +40,12 @@ export function Node(options: Option & NodeOption) {
         if ('$__metadata__' in (this as any)) {
           const metadata = (this as any).$__metadata__ as Metadata;
 
+          const process = Definition.getProcess(metadata.process, metadata.definition.id);
+
           for (const param of params) {
-            if (param === 'node') args.push(metadata);
-            else if (param === 'token') args.push(token);
-            else if (param === 'value') args.push(value);
+            if (param.type === 'node') args.push(process.getNode(node));
+            else if (param.type === 'token') args.push(token);
+            else if (param.type === 'value') args.push(value);
             else args.push(undefined);
           }
         } else throw new Error('@DefineProcess decorator is required.');

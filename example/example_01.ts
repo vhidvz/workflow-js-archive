@@ -1,7 +1,7 @@
 import { DefineProcess, EventNode, Node, Param, Token, WorkflowJS } from '../src';
 
 @DefineProcess({
-  name: 'Pizza Customer',
+  id: 'Process_166h0sl',
   path: './example/supplying-pizza.bpmn',
 })
 class PizzaCustomer extends WorkflowJS {
@@ -19,6 +19,7 @@ class PizzaCustomer extends WorkflowJS {
 }
 
 const workflow = new PizzaCustomer();
-const token = workflow.run();
+
+const token = workflow.run({ node: { name: 'Hungry for Pizza' }, token: new Token() });
 
 console.log(token);
