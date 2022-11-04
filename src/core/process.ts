@@ -28,9 +28,14 @@ export class Process extends Attribute {
   private lanes: { [id: string | symbol]: Element } = {};
   private elements: { [id: string | symbol]: Element } = {};
 
-  private sequences: { targets: SequenceGroup; sources: SequenceGroup } = {
+  private sequences: {
+    targets: SequenceGroup;
+    sources: SequenceGroup;
+    flows: SequenceGroup;
+  } = {
     targets: {},
     sources: {},
+    flows: {},
   };
 
   constructor(data?: Partial<Process>) {
@@ -60,25 +65,25 @@ export class Process extends Attribute {
 
     if ('activity' in info) {
       const incoming = () =>
-        (el as any)['bpmn:incoming']?.map((el: string) => this.elements[el]);
+        (el as any)['bpmn:incoming']?.map((el: string) => this.sequences.flows[el]);
       const outgoing = () =>
-        (el as any)['bpmn:outgoing']?.map((el: string) => this.elements[el]);
+        (el as any)['bpmn:outgoing']?.map((el: string) => this.sequences.flows[el]);
 
       element = ActivityNode.build(element, info.activity, incoming, outgoing);
     } else if ('event' in info) {
       const incoming = () =>
-        (el as any)['bpmn:incoming']?.map((el: string) => this.elements[el]);
+        (el as any)['bpmn:incoming']?.map((el: string) => this.sequences.flows[el]);
       const outgoing = () =>
-        (el as any)['bpmn:outgoing']?.map((el: string) => this.elements[el]);
-      const attachedToRef = () => this.elements[(el as any)['bpmn:attachedToRef']];
+        (el as any)['bpmn:outgoing']?.map((el: string) => this.sequences.flows[el]);
+      const attachedToRef = () => this.elements[(el as any).$.attachedToRef];
 
       element = EventNode.build(element, info.event, incoming, outgoing, attachedToRef);
     } else if ('gateway' in info) {
-      const $default = () => this.elements[(el as any)['bpmn:default']];
+      const $default = () => this.elements[(el as any).$.default];
       const incoming = () =>
-        (el as any)['bpmn:incoming']?.map((el: string) => this.elements[el]);
+        (el as any)['bpmn:incoming']?.map((el: string) => this.sequences.flows[el]);
       const outgoing = () =>
-        (el as any)['bpmn:outgoing']?.map((el: string) => this.elements[el]);
+        (el as any)['bpmn:outgoing']?.map((el: string) => this.sequences.flows[el]);
 
       element = GatewayNode.build(element, info.gateway, incoming, outgoing, $default);
     }
@@ -92,6 +97,8 @@ export class Process extends Attribute {
     const targetRef = this.elements[el.$.targetRef];
 
     const sequence = Sequence.build(el, sourceRef, targetRef);
+
+    this.sequences.flows[el.$.id] = sequence;
 
     this.sequences.sources[el.$.sourceRef] = sequence;
     this.sequences.targets[el.$.targetRef] = sequence;

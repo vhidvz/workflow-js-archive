@@ -1,4 +1,5 @@
-import { Element, Attribute } from '../../core/base';
+import { Element, Sequence } from '../../core/base';
+import { Flow } from './base';
 
 export enum GatewayType {
   Complex = 'complex',
@@ -12,11 +13,7 @@ export interface GatewayInfo {
   type: GatewayType;
 }
 
-export class GatewayNode extends Attribute implements GatewayInfo {
-  $default?: () => Element;
-  incoming!: () => Element[];
-  outgoing!: () => Element[];
-
+export class GatewayNode extends Flow implements GatewayInfo {
   type!: GatewayType;
 
   constructor(data?: Partial<GatewayNode>) {
@@ -26,8 +23,8 @@ export class GatewayNode extends Attribute implements GatewayInfo {
   static build(
     el: Element,
     info: GatewayInfo,
-    incoming: () => Element[],
-    outgoing: () => Element[],
+    incoming: () => Sequence[],
+    outgoing: () => Sequence[],
     $default?: () => Element,
   ) {
     return Object.assign(el, { ...info, incoming, outgoing, $default });

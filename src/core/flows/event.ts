@@ -1,4 +1,5 @@
-import { Element, Attribute } from '../../core/base';
+import { Element, Sequence } from '../../core/base';
+import { Flow } from './base';
 
 export enum EventType {
   End = 'end',
@@ -28,11 +29,7 @@ export interface EventInfo {
   intermediateType?: IntermediateType;
 }
 
-export class EventNode extends Attribute implements EventInfo {
-  incoming?: () => Element[];
-  outgoing?: () => Element[];
-  attachedToRef?: () => Element;
-
+export class EventNode extends Flow implements EventInfo {
   type!: EventType;
   intermediateType?: IntermediateType;
 
@@ -55,8 +52,8 @@ export class EventNode extends Attribute implements EventInfo {
   static build(
     el: Element,
     info: EventInfo,
-    incoming?: () => Element[],
-    outgoing?: () => Element[],
+    incoming: () => Sequence[],
+    outgoing: () => Sequence[],
     attachedToRef?: () => Element,
   ) {
     return Object.assign(el, { ...info, incoming, outgoing, attachedToRef });

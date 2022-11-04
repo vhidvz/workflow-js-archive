@@ -26,7 +26,7 @@ export class Definition {
 
     // add collaborations
     schema['bpmn:collaboration'].forEach((el) => {
-      const collaboration = new Collaboration(el);
+      const collaboration = Collaboration.build(el);
 
       definition.collaborations[el.$.id] = collaboration;
       if (el.$.name) definition.collaborations[el.$.name] = collaboration;
@@ -45,8 +45,16 @@ export class Definition {
     if (!definition) throw new Error('Definition not found');
 
     let process!: Process;
-    if ('name' in option) process = definition.processes[option.name];
-    else if ('id' in option) process = definition.processes[option.id];
+    if ('name' in option) {
+      const collaboration = Object.values(definition.collaborations);
+
+      let processId: string | undefined;
+      collaboration.some((el) => (processId = el.getProcessIdByName(option)));
+
+      if (!processId) throw new Error('Process id not found');
+
+      process = definition.processes[processId];
+    } else if ('id' in option) process = definition.processes[option.id];
 
     if (!process) throw new Error('Process not found');
 

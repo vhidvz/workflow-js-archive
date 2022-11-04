@@ -1,6 +1,6 @@
-import { Metadata, NodeOption, Option, ParamType } from '../types';
+import { NodeOption, Option, ParamType } from '../types';
+import { Process, Token } from '../../core';
 import { NodeKey, ParamKey } from '../keys';
-import { Definition, Token } from '../../core';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -30,7 +30,10 @@ export function Node(options: Option & NodeOption) {
     Reflect.defineMetadata(NodeKey, nodes, target, '$__metadata__');
 
     const method = descriptor.value!;
-    descriptor.value = function ({ node, token, value }: MethodOptions) {
+    descriptor.value = function (
+      process: Process,
+      { node, token, value }: MethodOptions,
+    ) {
       const params: { parameterIndex: number; type: ParamType }[] =
         Reflect.getOwnMetadata(ParamKey, target, propertyName);
 
@@ -38,15 +41,12 @@ export function Node(options: Option & NodeOption) {
         const args: any[] = [];
 
         if ('$__metadata__' in (this as any)) {
-          const metadata = (this as any).$__metadata__ as Metadata;
-
-          const process = Definition.getProcess(metadata.process, metadata.definition.id);
-
           for (const param of params) {
             if (param.type === 'node') args.push(process.getNode(node));
+            else if (param.type === 'process') args.push(process);
             else if (param.type === 'token') args.push(token);
             else if (param.type === 'value') args.push(value);
-            else args.push(undefined);
+            else args.push(arguments[param.parameterIndex]);
           }
         } else throw new Error('@DefineProcess decorator is required.');
 

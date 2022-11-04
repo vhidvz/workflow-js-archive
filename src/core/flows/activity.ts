@@ -1,4 +1,5 @@
-import { Element, Attribute } from '../../core/base';
+import { Element, Sequence } from '../../core/base';
+import { Flow } from './base';
 
 export enum TaskType {
   Send = 'send',
@@ -22,10 +23,7 @@ export interface ActivityInfo {
   taskType?: TaskType;
 }
 
-export class ActivityNode extends Attribute implements ActivityInfo {
-  incoming!: () => Element[];
-  outgoing!: () => Element[];
-
+export class ActivityNode extends Flow implements ActivityInfo {
   type!: ActivityType;
   taskType?: TaskType;
 
@@ -36,8 +34,8 @@ export class ActivityNode extends Attribute implements ActivityInfo {
   static build(
     el: Element,
     info: ActivityInfo,
-    incoming: () => Element[],
-    outgoing: () => Element[],
+    incoming: () => Sequence[],
+    outgoing: () => Sequence[],
   ) {
     return Object.assign(el, { ...info, incoming, outgoing });
   }

@@ -17,8 +17,7 @@ export type BPMNSequenceFlow = BPMNElement & {
 
 // Gateway elements
 
-export type BPMNNormalGateway = BPMNElement & {
-  'bpmn:default'?: string;
+export type BPMNNormalGateway = (BPMNElement & { $: { default?: string } }) & {
   'bpmn:incoming': string[];
   'bpmn:outgoing': string[];
 };
@@ -45,9 +44,8 @@ export type BPMNIntermediateEvent = BPMNElement & {
   'bpmn:outgoing': string[];
 } & BPMNEventDefinition;
 
-export type BPMNBoundaryEvent = BPMNElement & {
+export type BPMNBoundaryEvent = (BPMNElement & { $: { attachedToRef?: string } }) & {
   'bpmn:outgoing': string[];
-  'bpmn:attachedToRef': string;
 } & BPMNEventDefinition;
 
 export type BPMNStartEvent = BPMNElement & {
