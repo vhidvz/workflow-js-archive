@@ -10,8 +10,8 @@ export type Metadata = {
   process: Option | { id: string | symbol; name?: string };
 };
 
-export type NodeOption = { start?: boolean; end?: boolean };
+export type ParamType = 'node' | 'token' | 'value';
 
-export type ParamType = 'process' | 'node' | 'token' | 'value';
+export type NodeOption = { start?: boolean; end?: boolean };
 
 export type Option = { id: string | symbol } | { name: string };
