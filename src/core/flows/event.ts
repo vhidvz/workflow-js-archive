@@ -56,6 +56,6 @@ export class EventNode extends Flow implements EventInfo {
     outgoing: () => Sequence[],
     attachedToRef?: () => Element,
   ) {
-    return Object.assign(el, { ...info, incoming, outgoing, attachedToRef });
+    return new EventNode({ ...el, ...info, incoming, outgoing, attachedToRef });
   }
 }

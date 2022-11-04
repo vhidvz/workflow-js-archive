@@ -37,6 +37,6 @@ export class ActivityNode extends Flow implements ActivityInfo {
     incoming: () => Sequence[],
     outgoing: () => Sequence[],
   ) {
-    return Object.assign(el, { ...info, incoming, outgoing });
+    return new ActivityNode({ ...el, ...info, incoming, outgoing });
   }
 }

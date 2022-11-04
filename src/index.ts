@@ -2,20 +2,21 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { DataObject, Metadata, NodeKey, NodeOption, Option } from './common';
 import { Definition, Element, Token } from './core';
-import { Flow } from './core/flows';
 
 export * from './core';
 export * from './type';
 export * from './utils';
 export * from './common';
 
+type UpdateTokenOption<T = any> = Option & {
+  value?: T;
+  timestamp: number;
+} & NodeOption;
+
 const updateToken = <T = any>(
   token: Token,
   element: Element,
-  options: {
-    value?: T;
-    timestamp: number;
-  } & NodeOption,
+  options: UpdateTokenOption<T>,
 ) => {
   const { timestamp, value } = options;
 
@@ -45,12 +46,6 @@ export class WorkflowJS<T = any> {
   ) {
     const properties = Reflect.getMetadata(NodeKey, this, '$__metadata__');
 
-    let property!: { options: Option & NodeOption; propertyName: string };
-    if ('name' in options.node) property = properties[options.node.name];
-    else if ('id' in options.node) property = properties[options.node.id];
-
-    if (!property) throw new Error('Requested method not found');
-
     const metadata = (this as any).$__metadata__ as Metadata;
     const process = Definition.getProcess(metadata.process, metadata.definition.id);
 
@@ -60,10 +55,18 @@ export class WorkflowJS<T = any> {
 
     const jobQueue = [{ element, value }];
     for (const { element, value } of jobQueue) {
-      updateToken(token, element, { timestamp, value });
+      let property!: { options: Option & NodeOption; propertyName: string };
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      if ('name' in element.$) property = properties[element.$.name!];
+      if (!property && 'id' in element.$) property = properties[element.$.id];
 
+      if (!property) throw new Error('Requested method not found');
+
+      updateToken(token, element, { timestamp, value, ...property.options });
+
+      const args = { token, node: element.$, value };
       const result: DataObject<K> =
-        (this as any)[property.propertyName](process, { ...options, value }) ?? {};
+        (this as any)[property.propertyName](process, args) ?? {};
 
       if (result.next) {
         if (!Array.isArray(result.next))

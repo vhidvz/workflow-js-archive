@@ -12,6 +12,6 @@ export class Flow extends Attribute {
       return this.outgoing().find((el) => el.$.name === option.name)?.targetRef;
     else if (option && 'id' in option)
       return this.outgoing().find((el) => el.$.id === option.id)?.targetRef;
-    else return this.outgoing();
+    else return this.outgoing()?.map((el) => el?.targetRef);
   }
 }

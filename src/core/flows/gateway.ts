@@ -27,6 +27,6 @@ export class GatewayNode extends Flow implements GatewayInfo {
     outgoing: () => Sequence[],
     $default?: () => Element,
   ) {
-    return Object.assign(el, { ...info, incoming, outgoing, $default });
+    return new GatewayNode({ ...el, ...info, incoming, outgoing, $default });
   }
 }
