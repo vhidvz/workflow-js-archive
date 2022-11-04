@@ -9,6 +9,34 @@ export * from './type';
 export * from './utils';
 export * from './common';
 
+const updateToken = <T = any>(
+  token: Token,
+  element: Flow,
+  options: {
+    value?: T;
+    node: Option;
+    timestamp: number;
+  } & NodeOption,
+) => {
+  const { node, value, timestamp } = options;
+
+  if (options.start && !token.history.length)
+    token.push(element, { value, timestamp, start: true });
+  else if (token.history.length) {
+    if (!token.chields.length) {
+      if (token.state.end) throw new Error('State already ended');
+
+      if ('id' in node && token.state.$.id === node.id)
+        throw new Error('This state already taken');
+      if ('name' in node && token.state.$.name === node.name)
+        throw new Error('This state already taken');
+
+      // TODO: check outgoing of token.state.ref
+      token.push(element, { value, timestamp });
+    }
+  }
+};
+
 export class WorkflowJS<T = any> {
   $__metadata__!: Metadata;
 
@@ -32,27 +60,19 @@ export class WorkflowJS<T = any> {
     const element = process.getNode(node) as Flow;
     if (!element) throw new Error('Node element not found');
 
-    if (property.options.start && !token.history.length)
-      token.push(element, { value, timestamp, start: true });
-    else if (token.history.length) {
-      if (!token.chields.length) {
-        if (token.state.end) throw new Error('State already ended');
-
-        if ('id' in node && token.state.$.id === node.id)
-          throw new Error('This state already taken');
-        if ('name' in node && token.state.$.name === node.name)
-          throw new Error('This state already taken');
-
-        // TODO: check outgoing of token.state.ref
-        token.push(element, { value, timestamp });
-      }
-    }
+    updateToken(token, element, { node, value, timestamp });
 
     let val = value;
     do {
       const state = token.state;
+
       val = (this as any)[property.propertyName](process, { ...options, value: val });
-      if (token.state.$.id === state.$.id || token.state.$.name === state.$.name) break;
+
+      if (state.$?.id && token.state.$.id === state.$.id) break;
+      if (state.$?.name && token.state.$.name === state.$.name) break;
+
+      const element = process.getNode(token.state.$) as Flow;
+      updateToken(token, element, { node, timestamp, value: val });
       // eslint-disable-next-line no-constant-condition
     } while (true);
 
