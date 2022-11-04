@@ -79,6 +79,6 @@ export class WorkflowJS<T = any> {
       }
     }
 
-    return options.token;
+    return token;
   }
 }

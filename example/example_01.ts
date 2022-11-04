@@ -52,7 +52,7 @@ class PizzaCustomer extends WorkflowJS {
     return { next: node.takeOutgoing() };
   }
 
-  @Node({ name: '«Where Is My Pizza»' })
+  @Node({ id: 'Gateway_0s7y3gr' })
   whereIsMyPizza(
     @Param('node') node: GatewayNode,
     @Param('token') token: Token,

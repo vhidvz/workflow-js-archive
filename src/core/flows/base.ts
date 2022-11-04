@@ -9,9 +9,9 @@ export class Flow extends Attribute {
 
   takeOutgoing(option?: Option): Element | Element[] | undefined {
     if (option && 'name' in option)
-      return this.outgoing().find((el) => el.$.name === option.name)?.targetRef;
+      return this.outgoing().find((el) => el.targetRef.$.name === option.name)?.targetRef;
     else if (option && 'id' in option)
-      return this.outgoing().find((el) => el.$.id === option.id)?.targetRef;
+      return this.outgoing().find((el) => el.targetRef.$.id === option.id)?.targetRef;
     else return this.outgoing()?.map((el) => el?.targetRef);
   }
 }
