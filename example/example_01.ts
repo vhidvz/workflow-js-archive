@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DefineProcess, EventNode, Node, Param, Token, WorkflowJS } from '../src';
 
 @DefineProcess({
