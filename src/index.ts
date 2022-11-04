@@ -62,7 +62,7 @@ export class WorkflowJS<T = any> {
 
       if (!property) throw new Error('Requested method not found');
 
-      updateToken(token, element, { timestamp, value, ...property.options });
+      updateToken<K>(token, element, { timestamp, value, ...property.options });
 
       const args = { token, node: element.$, value };
       const result: DataObject<K> =
