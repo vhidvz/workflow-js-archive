@@ -1,5 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DefineProcess, EventNode, Node, Param, Token, WorkflowJS } from '../src';
+import {
+  DataObject,
+  DefineProcess,
+  EventNode,
+  Node,
+  Param,
+  Token,
+  WorkflowJS,
+} from '../src';
 
 @DefineProcess({
   name: 'Pizza Customer',
@@ -11,11 +19,11 @@ class PizzaCustomer extends WorkflowJS {
     @Param('node') node: EventNode,
     @Param('token') token: Token,
     @Param('value') value: any,
-  ) {
+  ): DataObject {
     console.log(node);
     console.log(token);
     console.log(value);
-    return;
+    return { next: node.takeOutgoing() };
   }
 }
 

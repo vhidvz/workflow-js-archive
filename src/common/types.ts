@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { BPMNSchema } from '../type';
+import { Element } from '../core';
 
 export type DefineOption =
   | ({ xml: string } & Option)
@@ -15,3 +17,5 @@ export type ParamType = 'node' | 'token' | 'value';
 export type NodeOption = { start?: boolean; end?: boolean };
 
 export type Option = { id: string | symbol } | { name: string };
+
+export type DataObject<T = any> = { next?: Element | Element[]; value?: T };

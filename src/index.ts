@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
-import { Metadata, NodeKey, NodeOption, Option } from './common';
-import { Definition, Token } from './core';
+import { DataObject, Metadata, NodeKey, NodeOption, Option } from './common';
+import { Definition, Element, Token } from './core';
 import { Flow } from './core/flows';
 
 export * from './core';
@@ -11,28 +11,27 @@ export * from './common';
 
 const updateToken = <T = any>(
   token: Token,
-  element: Flow,
+  element: Element,
   options: {
     value?: T;
-    node: Option;
     timestamp: number;
   } & NodeOption,
 ) => {
-  const { node, value, timestamp } = options;
+  const { timestamp, value } = options;
 
   if (options.start && !token.history.length)
-    token.push(element, { value, timestamp, start: true });
+    token.push(element, { timestamp, value, start: true });
   else if (token.history.length) {
     if (!token.chields.length) {
       if (token.state.end) throw new Error('State already ended');
 
-      if ('id' in node && token.state.$.id === node.id)
+      if ('id' in element && token.state.$.id === element.id)
         throw new Error('This state already taken');
-      if ('name' in node && token.state.$.name === node.name)
+      if ('name' in element && token.state.$.name === element.name)
         throw new Error('This state already taken');
 
       // TODO: check outgoing of token.state.ref
-      token.push(element, { value, timestamp });
+      token.push(element, { timestamp, value });
     }
   }
 };
@@ -56,25 +55,26 @@ export class WorkflowJS<T = any> {
     const process = Definition.getProcess(metadata.process, metadata.definition.id);
 
     const { node, token, value } = options;
-
-    const element = process.getNode(node) as Flow;
+    const element = process.getNode(node) as Element;
     if (!element) throw new Error('Node element not found');
 
-    updateToken(token, element, { node, value, timestamp });
+    const jobQueue = [{ element, value }];
+    for (const { element, value } of jobQueue) {
+      updateToken(token, element, { timestamp, value });
 
-    let val = value;
-    do {
-      const state = token.state;
+      const result: DataObject<K> =
+        (this as any)[property.propertyName](process, { ...options, value }) ?? {};
 
-      val = (this as any)[property.propertyName](process, { ...options, value: val });
-
-      if (state.$?.id && token.state.$.id === state.$.id) break;
-      if (state.$?.name && token.state.$.name === state.$.name) break;
-
-      const element = process.getNode(token.state.$) as Flow;
-      updateToken(token, element, { node, timestamp, value: val });
-      // eslint-disable-next-line no-constant-condition
-    } while (true);
+      if (result.next) {
+        if (!Array.isArray(result.next))
+          jobQueue.push({ element: result.next, value: result.value });
+        else {
+          result.next.forEach((item) =>
+            jobQueue.push({ element: item, value: result.value }),
+          );
+        }
+      }
+    }
 
     return options.token;
   }
