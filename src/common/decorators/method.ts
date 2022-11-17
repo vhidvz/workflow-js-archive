@@ -45,14 +45,11 @@ export function Node(options: Option & NodeOption) {
             if (param.type === 'node') args.push(process.getNode(node));
             else if (param.type === 'token') args.push(token);
             else if (param.type === 'value') args.push(value);
-            else args.push(arguments[param.parameterIndex]);
           }
         } else throw new Error('@DefineProcess decorator is required.');
 
         return method.call(this, ...args);
       }
-
-      return method.call(this, ...arguments);
     };
   };
 }
