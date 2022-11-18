@@ -45,6 +45,7 @@ export function Node(options: Option & NodeOption) {
             if (param.type === 'node') args.push(process.getNode(node));
             else if (param.type === 'token') args.push(token);
             else if (param.type === 'value') args.push(value);
+            else throw new Error('Arguments type is not supported');
           }
         } else throw new Error('@DefineProcess decorator is required.');
 
