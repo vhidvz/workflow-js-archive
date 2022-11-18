@@ -38,15 +38,29 @@ const updateToken = <T = any>(
 };
 
 export class WorkflowJS<T = any> {
-  $__metadata__!: Metadata;
+  target!: any;
 
   public run<K = any>(
-    options: { node: Option; token: Token<T, K>; value?: K },
+    options: {
+      handler?: any;
+      factory?: () => any;
+      node: Option;
+      token: Token<T, K>;
+      value?: K;
+    },
     timestamp = Date.now(),
   ) {
-    const properties = Reflect.getMetadata(NodeKey, this, '$__metadata__');
+    const { handler, factory } = options;
 
-    const metadata = (this as any).$__metadata__ as Metadata;
+    if (!this.target)
+      this.target =
+        '$__metadata__' in this ? this : (factory ?? (() => undefined))() ?? handler;
+
+    if (!this.target) throw new Error('target workflow not found');
+
+    const properties = Reflect.getMetadata(NodeKey, this.target, '$__metadata__');
+
+    const metadata = (this.target as any).$__metadata__ as Metadata;
     const process = Definition.getProcess(metadata.process, metadata.definition.id);
 
     const { node, token, value } = options;
@@ -66,7 +80,62 @@ export class WorkflowJS<T = any> {
 
       const args = { token, node: element.$, value };
       const result: DataObject<K> =
-        (this as any)[property.propertyName](process, args) ?? {};
+        (this.target as any)[property.propertyName](process, args) ?? {};
+
+      if (result.next) {
+        if (!Array.isArray(result.next))
+          jobQueue.push({ element: result.next, value: result.value });
+        else {
+          result.next.forEach((item) =>
+            jobQueue.push({ element: item, value: result.value }),
+          );
+        }
+      }
+    }
+
+    return token;
+  }
+
+  static execute<T = any, K = any>(
+    options: {
+      handler?: any;
+      factory?: () => any;
+      node: Option;
+      token: Token<T, K>;
+      value?: K;
+    },
+    timestamp = Date.now(),
+  ) {
+    const { handler, factory } = options;
+
+    const target =
+      '$__metadata__' in this ? this : (factory ?? (() => undefined))() ?? handler;
+
+    if (!target) throw new Error('target workflow not found');
+
+    const properties = Reflect.getMetadata(NodeKey, target, '$__metadata__');
+
+    const metadata = (target as any).$__metadata__ as Metadata;
+    const process = Definition.getProcess(metadata.process, metadata.definition.id);
+
+    const { node, token, value } = options;
+    const element = process.getNode(node) as Element;
+    if (!element) throw new Error('Node element not found');
+
+    const jobQueue = [{ element, value }];
+    for (const { element, value } of jobQueue) {
+      let property!: { options: Option & NodeOption; propertyName: string };
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      if ('name' in element.$) property = properties[element.$.name!];
+      if (!property && 'id' in element.$) property = properties[element.$.id];
+
+      if (!property) throw new Error('Requested method not found');
+
+      updateToken<K>(token, element, { timestamp, value, ...property.options });
+
+      const args = { token, node: element.$, value };
+      const result: DataObject<K> =
+        (target as any)[property.propertyName](process, args) ?? {};
 
       if (result.next) {
         if (!Array.isArray(result.next))

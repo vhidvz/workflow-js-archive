@@ -7,14 +7,19 @@ export type DefineOption =
   | ({ path: string } & Option)
   | ({ schema: BPMNSchema } & Option);
 
+export type NodeOption = {
+  start?: boolean;
+  end?: boolean;
+  next?: 'auto';
+  follow?: 'next';
+};
+
 export type Metadata = {
   definition: { id?: string | symbol };
   process: Option | { id: string | symbol; name?: string };
 };
 
 export type ParamType = 'node' | 'token' | 'value';
-
-export type NodeOption = { start?: boolean; end?: boolean };
 
 export type Option = { id: string | symbol } | { name: string };
 
