@@ -24,11 +24,11 @@ const updateToken = <T = any>(
     token.push(element, { timestamp, value, start: true });
   else if (token.history.length) {
     if (!token.chields.length) {
-      if (token.state.end) throw new Error('State already ended');
+      if (token.state?.end) throw new Error('State already ended');
 
-      if ('id' in element && token.state.$.id === element.id)
+      if ('id' in element && token.state?.$.id === element.id)
         throw new Error('This state already taken');
-      if ('name' in element && token.state.$.name === element.name)
+      if ('name' in element && token.state?.$.name === element.name)
         throw new Error('This state already taken');
 
       // TODO: check outgoing of token.state.ref

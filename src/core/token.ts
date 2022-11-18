@@ -28,8 +28,8 @@ export class Token<T = any, K = any> {
     this.history.push({ $: { ...node.$ }, ...options, ref: node });
   }
 
-  get state(): Sate<K> {
-    return this.history[this.history.length - 1];
+  get state(): Sate<K> | undefined {
+    if (!this.chields.length) return this.history[this.history.length - 1];
   }
 
   constructor(token?: Partial<Token<T, K>>) {
