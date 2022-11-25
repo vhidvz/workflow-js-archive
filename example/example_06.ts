@@ -3,6 +3,7 @@ import {
   ActivityNode,
   DataObject,
   DefineProcess,
+  Definition,
   EventNode,
   GatewayNode,
   Node,
@@ -13,7 +14,6 @@ import {
 
 @DefineProcess({
   name: 'Pizza Customer',
-  path: './example/supplying-pizza.bpmn',
 })
 class PizzaCustomer {
   @Node({ name: 'Hungry for Pizza', start: true })
@@ -137,8 +137,10 @@ class PizzaCustomer {
 }
 
 const pizzaCustomer = new PizzaCustomer();
+const definition = Definition.build({ path: './example/supplying-pizza.bpmn' });
 
 const token = WorkflowJS.run({
+  definition,
   handler: pizzaCustomer,
   node: { name: 'Hungry for Pizza' },
   token: new Token(),
@@ -148,5 +150,10 @@ const token = WorkflowJS.run({
 console.log(token);
 
 console.log(
-  WorkflowJS.run({ handler: pizzaCustomer, node: { name: 'Eat the Pizza' }, token }),
+  WorkflowJS.run({
+    definition,
+    handler: pizzaCustomer,
+    node: { name: 'Eat the Pizza' },
+    token,
+  }),
 );

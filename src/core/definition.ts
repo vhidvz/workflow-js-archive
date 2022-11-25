@@ -1,6 +1,7 @@
+import { BuildDefineOption, Default, Option } from '../common';
 import { Collaboration } from './collaboration';
-import { Default, Option } from '../common';
 import { BPMNDefinition } from '../type';
+import { parse, readFile } from 'utils';
 import { Process } from './process';
 
 export class Definition {
@@ -13,7 +14,15 @@ export class Definition {
 
   private static definitions: { [id: string | symbol]: Definition } = {};
 
-  public static add(schema: BPMNDefinition, id: string | symbol = Default): void {
+  public static build(options: BuildDefineOption) {
+    let schema!: BPMNDefinition;
+
+    if ('schema' in options) schema = options.schema;
+    if ('xml' in options) schema = parse(options.xml)['bpmn:definitions'];
+    if ('path' in options) schema = parse(readFile(options.path))['bpmn:definitions'];
+
+    if (!schema) throw new Error('Schema not found');
+
     const definition = new Definition();
 
     // add processes
@@ -32,11 +41,25 @@ export class Definition {
       if (el.$.name) definition.collaborations[el.$.name] = collaboration;
     });
 
-    Definition.definitions[id] = definition;
+    return definition;
   }
 
-  public static del(id: string | symbol = Default): void {
-    delete Definition.definitions[id];
+  public getProcess(option: Option): Process {
+    let process!: Process;
+    if ('name' in option) {
+      const collaboration = Object.values(this.collaborations);
+
+      let processId: string | undefined;
+      collaboration.some((el) => (processId = el.getProcessIdByName(option)));
+
+      if (!processId) throw new Error('Process id not found');
+
+      process = this.processes[processId];
+    } else if ('id' in option) process = this.processes[option.id];
+
+    if (!process) throw new Error('Process not found');
+
+    return process;
   }
 
   public static getProcess(option: Option, id: string | symbol = Default): Process {
@@ -59,5 +82,13 @@ export class Definition {
     if (!process) throw new Error('Process not found');
 
     return process;
+  }
+
+  public static add(schema: BPMNDefinition, id: string | symbol = Default): void {
+    Definition.definitions[id] = Definition.build({ schema });
+  }
+
+  public static del(id: string | symbol = Default): void {
+    delete Definition.definitions[id];
   }
 }

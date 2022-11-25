@@ -39,6 +39,7 @@ const updateToken = <T = any>(
 
 export class WorkflowJS<T = any> {
   target!: any;
+  definition?: Definition;
 
   public run<K = any>(
     options: {
@@ -47,9 +48,11 @@ export class WorkflowJS<T = any> {
       node: Option;
       token: Token<T, K>;
       value?: K;
+      definition?: Definition;
     },
     timestamp = Date.now(),
   ) {
+    this.definition = options.definition;
     const { handler, factory } = options;
 
     if (!this.target)
@@ -61,7 +64,12 @@ export class WorkflowJS<T = any> {
     const properties = Reflect.getMetadata(NodeKey, this.target, '$__metadata__');
 
     const metadata = (this.target as any).$__metadata__ as Metadata;
-    const process = Definition.getProcess(metadata.process, metadata.definition.id);
+
+    const process = this.definition
+      ? this.definition.getProcess(metadata.process)
+      : Definition.getProcess(metadata.process, metadata.definition.id);
+
+    if (!process) throw new Error('Process definition not found');
 
     const { node, token, value } = options;
     const element = process.getNode(node) as Element;
@@ -96,17 +104,18 @@ export class WorkflowJS<T = any> {
     return token;
   }
 
-  static execute<T = any, K = any>(
+  static run<T = any, K = any>(
     options: {
       handler?: any;
       factory?: () => any;
       node: Option;
       token: Token<T, K>;
       value?: K;
+      definition?: Definition;
     },
     timestamp = Date.now(),
   ) {
-    const { handler, factory } = options;
+    const { handler, factory, definition } = options;
 
     const target =
       '$__metadata__' in this ? this : (factory ?? (() => undefined))() ?? handler;
@@ -116,7 +125,12 @@ export class WorkflowJS<T = any> {
     const properties = Reflect.getMetadata(NodeKey, target, '$__metadata__');
 
     const metadata = (target as any).$__metadata__ as Metadata;
-    const process = Definition.getProcess(metadata.process, metadata.definition.id);
+
+    const process = definition
+      ? definition.getProcess(metadata.process)
+      : Definition.getProcess(metadata.process, metadata.definition.id);
+
+    if (!process) throw new Error('Process definition not found');
 
     const { node, token, value } = options;
     const element = process.getNode(node) as Element;

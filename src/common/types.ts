@@ -1,11 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BPMNSchema } from '../type';
+import { BPMNDefinition, BPMNSchema } from '../type';
 import { Element } from '../core';
 
 export type DefineOption =
   | ({ xml: string } & Option)
   | ({ path: string } & Option)
   | ({ schema: BPMNSchema } & Option);
+
+export type BuildDefineOption =
+  | { xml: string }
+  | { path: string }
+  | { schema: BPMNDefinition };
 
 export type NodeOption = {
   start?: boolean;

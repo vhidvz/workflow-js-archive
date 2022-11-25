@@ -3,6 +3,7 @@ import {
   ActivityNode,
   DataObject,
   DefineProcess,
+  Definition,
   EventNode,
   GatewayNode,
   Node,
@@ -11,33 +12,17 @@ import {
   WorkflowJS,
 } from '../src';
 
-@DefineProcess({
-  name: 'Pizza Customer',
-  path: './example/supplying-pizza.bpmn',
-})
+@DefineProcess({ name: 'Pizza Customer' })
 class PizzaCustomer {
-  @Node({ name: 'Hungry for Pizza', start: true })
+  @Node({ name: 'Hungry for Pizza', start: true, next: 'auto', follow: 'next' })
   public hungryForPizza(
     @Param('node') node: EventNode,
     @Param('token') token: Token,
     @Param('value') value: any,
-  ): DataObject {
+  ) {
     console.log(node);
     console.log(token);
     console.log(value);
-    return { next: node.takeOutgoing() };
-  }
-
-  @Node({ name: 'Select a Pizza' })
-  selectAPizza(
-    @Param('node') node: ActivityNode,
-    @Param('token') token: Token,
-    @Param('value') value: any,
-  ): DataObject {
-    console.log(node);
-    console.log(token);
-    console.log(value);
-    return { next: node.takeOutgoing() };
   }
 
   @Node({ name: 'Order a Pizza' })
@@ -45,11 +30,10 @@ class PizzaCustomer {
     @Param('node') node: ActivityNode,
     @Param('token') token: Token,
     @Param('value') value: any,
-  ): DataObject {
+  ) {
     console.log(node);
     console.log(token);
     console.log(value);
-    return { next: node.takeOutgoing() };
   }
 
   @Node({ id: 'Gateway_0s7y3gr' })
@@ -136,10 +120,12 @@ class PizzaCustomer {
   }
 }
 
-const pizzaCustomer = new PizzaCustomer();
+const workflow = new WorkflowJS();
+const definition = Definition.build({ path: './example/supplying-pizza.bpmn' });
 
-const token = WorkflowJS.run({
-  handler: pizzaCustomer,
+const token = workflow.run({
+  definition,
+  factory: () => new PizzaCustomer(),
   node: { name: 'Hungry for Pizza' },
   token: new Token(),
   value: 0,
@@ -147,6 +133,4 @@ const token = WorkflowJS.run({
 
 console.log(token);
 
-console.log(
-  WorkflowJS.run({ handler: pizzaCustomer, node: { name: 'Eat the Pizza' }, token }),
-);
+console.log(workflow.run({ node: { name: 'Eat the Pizza' }, token }));
