@@ -13,9 +13,10 @@ export type BuildDefineOption =
   | { schema: BPMNDefinition };
 
 export type NodeOption = {
-  start?: boolean;
-  end?: boolean;
+  start?: true;
+  end?: true;
   next?: 'auto';
+  finish?: false;
   follow?: 'next';
 };
 
@@ -28,4 +29,8 @@ export type ParamType = 'node' | 'token' | 'value';
 
 export type Option = { id: string | symbol } | { name: string };
 
-export type DataObject<T = any> = { next?: Element | Element[]; value?: T };
+export type DataObject<T = any> = {
+  next?: Element | Element[];
+  value?: T;
+  finish?: boolean;
+};
