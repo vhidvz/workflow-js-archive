@@ -136,10 +136,8 @@ class PizzaCustomer {
   }
 }
 
-const pizzaCustomer = new PizzaCustomer();
-
-const token = WorkflowJS.run({
-  handler: pizzaCustomer,
+const { token, target } = WorkflowJS.run({
+  handler: new PizzaCustomer(),
   node: { name: 'Hungry for Pizza' },
   token: new Token(),
   value: 0,
@@ -147,6 +145,4 @@ const token = WorkflowJS.run({
 
 console.log(token);
 
-console.log(
-  WorkflowJS.run({ handler: pizzaCustomer, node: { name: 'Eat the Pizza' }, token }),
-);
+console.log(WorkflowJS.run({ handler: target, node: { name: 'Eat the Pizza' }, token }));

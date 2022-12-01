@@ -124,7 +124,7 @@ class PizzaCustomer {
 
 const workflow = new WorkflowJS();
 
-const token = workflow.run({
+const { token } = workflow.run({
   factory: () => new PizzaCustomer(),
   node: { name: 'Hungry for Pizza' },
   token: new Token(),

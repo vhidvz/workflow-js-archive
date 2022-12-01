@@ -1,4 +1,4 @@
-import { BuildDefineOption, Default, Option } from '../common';
+import { Default, DefinitionOption, Option } from '../common';
 import { Collaboration } from './collaboration';
 import { BPMNDefinition } from '../type';
 import { parse, readFile } from 'utils';
@@ -14,7 +14,11 @@ export class Definition {
 
   private static definitions: { [id: string | symbol]: Definition } = {};
 
-  public static build(options: BuildDefineOption) {
+  public static get(id: string | symbol = Default): Definition {
+    return Definition.definitions[id];
+  }
+
+  public static build(options: DefinitionOption) {
     let schema!: BPMNDefinition;
 
     if ('schema' in options) schema = options.schema;

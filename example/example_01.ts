@@ -138,7 +138,7 @@ class PizzaCustomer extends WorkflowJS {
 
 const workflow = new PizzaCustomer();
 
-const token = workflow.run({
+const { token } = workflow.run({
   node: { name: 'Hungry for Pizza' },
   token: new Token(),
   value: 0,

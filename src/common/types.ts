@@ -7,7 +7,7 @@ export type DefineOption =
   | ({ path: string } & Option)
   | ({ schema: BPMNSchema } & Option);
 
-export type BuildDefineOption =
+export type DefinitionOption =
   | { xml: string }
   | { path: string }
   | { schema: BPMNDefinition };

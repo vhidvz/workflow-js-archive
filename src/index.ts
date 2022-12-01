@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
-import { DataObject, Metadata, NodeKey, NodeOption, Option } from './common';
+import {
+  DataObject,
+  DefineOption,
+  Metadata,
+  NodeKey,
+  NodeOption,
+  Option,
+} from './common';
 import { Definition, Element, Token } from './core';
 
 export * from './core';
@@ -12,6 +19,21 @@ type UpdateTokenOption<T = any> = Option & {
   value?: T;
   timestamp: number;
 } & NodeOption;
+
+type ResultOption<T = any, K = any> = {
+  target: any;
+  token: Token<T, K>;
+  definition: Definition;
+};
+
+type RunOption<T = any, K = any> = {
+  handler?: any;
+  factory?: () => any;
+  node: Option;
+  token: Token<T, K>;
+  value?: K;
+  definition?: Definition;
+} & Partial<DefineOption>;
 
 const updateToken = <T = any>(
   token: Token,
@@ -42,16 +64,9 @@ export class WorkflowJS<T = any> {
   definition?: Definition;
 
   public run<K = any>(
-    options: {
-      handler?: any;
-      factory?: () => any;
-      node: Option;
-      token: Token<T, K>;
-      value?: K;
-      definition?: Definition;
-    },
+    options: RunOption<T, K>,
     timestamp = Date.now(),
-  ) {
+  ): ResultOption<T, K> {
     this.definition = options.definition;
     const { handler, factory } = options;
 
@@ -101,20 +116,17 @@ export class WorkflowJS<T = any> {
       }
     }
 
-    return token;
+    return {
+      token,
+      target: this.target,
+      definition: this.definition ?? Definition.get(metadata.definition.id),
+    };
   }
 
   static run<T = any, K = any>(
-    options: {
-      handler?: any;
-      factory?: () => any;
-      node: Option;
-      token: Token<T, K>;
-      value?: K;
-      definition?: Definition;
-    },
+    options: RunOption<T, K>,
     timestamp = Date.now(),
-  ) {
+  ): ResultOption<T, K> {
     const { handler, factory, definition } = options;
 
     const target =
@@ -162,6 +174,10 @@ export class WorkflowJS<T = any> {
       }
     }
 
-    return token;
+    return {
+      token,
+      target,
+      definition: definition ?? Definition.get(metadata.definition.id),
+    };
   }
 }
