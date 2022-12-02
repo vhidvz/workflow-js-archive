@@ -1,14 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
-import {
-  DataObject,
-  DefineOption,
-  Metadata,
-  NodeKey,
-  NodeOption,
-  Option,
-} from './common';
+import { DataObject, Metadata, NodeKey, NodeOption, Option } from './common';
 import { Definition, Element, Token } from './core';
+import { BPMNDefinition } from './type';
 
 export * from './core';
 export * from './type';
@@ -33,7 +27,10 @@ type RunOption<T = any, K = any> = {
   token: Token<T, K>;
   value?: K;
   definition?: Definition;
-} & Partial<DefineOption>;
+  xml?: string;
+  path?: string;
+  schema?: BPMNDefinition;
+};
 
 const updateToken = <T = any>(
   token: Token,
@@ -65,10 +62,15 @@ export class WorkflowJS<T = any> {
 
   public run<K = any>(
     options: RunOption<T, K>,
-    timestamp = Date.now(),
+    timestamp = Date.now(), // TODO: remove it, replace with finished at date and time
   ): ResultOption<T, K> {
     this.definition = options.definition;
     const { handler, factory } = options;
+
+    const { path, xml, schema } = options;
+    if (path) this.definition = Definition.build({ path });
+    else if (xml) this.definition = Definition.build({ xml });
+    else if (schema) this.definition = Definition.build({ schema });
 
     if (!this.target)
       this.target =
@@ -125,9 +127,15 @@ export class WorkflowJS<T = any> {
 
   static run<T = any, K = any>(
     options: RunOption<T, K>,
-    timestamp = Date.now(),
+    timestamp = Date.now(), // TODO: remove it, replace with finished at date and time
   ): ResultOption<T, K> {
-    const { handler, factory, definition } = options;
+    const { handler, factory } = options;
+
+    let { definition } = options;
+    const { path, xml, schema } = options;
+    if (path) definition = Definition.build({ path });
+    else if (xml) definition = Definition.build({ xml });
+    else if (schema) definition = Definition.build({ schema });
 
     const target =
       '$__metadata__' in this ? this : (factory ?? (() => undefined))() ?? handler;

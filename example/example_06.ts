@@ -137,14 +137,13 @@ class PizzaCustomer {
 }
 
 const pizzaCustomer = new PizzaCustomer();
-const definition = Definition.build({ path: './example/supplying-pizza.bpmn' }); // TODO: remove this line
 
-const { token } = WorkflowJS.run({
-  definition,
+const { token, definition } = WorkflowJS.run({
   handler: pizzaCustomer,
   node: { name: 'Hungry for Pizza' },
   token: new Token(),
   value: 0,
+  path: './example/supplying-pizza.bpmn',
 });
 
 console.log(token);
