@@ -3,14 +3,19 @@ import { Element, Attribute } from './base';
 import { NodeOption } from '../common';
 
 export type Sate<T = any> = Omit<Attribute, 'id' | 'name'> & {
-  timestamp: number;
   value?: T;
   ref: Element;
+  finished?: boolean;
+  reference?: string;
 } & NodeOption;
 
 export class Token<T = any, K = any> {
   data?: T;
+  locked?: boolean;
+
   ref?: Token<T, K>;
+  reference?: string;
+
   history: Sate<K>[] = [];
   chields: Token<T, K>[] = [];
 
@@ -24,7 +29,7 @@ export class Token<T = any, K = any> {
     return this.history.pop();
   }
 
-  push(node: Element, options: { value?: K; timestamp: number } & NodeOption) {
+  push(node: Element, options: { value?: K } & NodeOption) {
     this.history.push({ $: { ...node.$ }, ...options, ref: node });
   }
 

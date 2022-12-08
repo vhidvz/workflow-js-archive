@@ -16,7 +16,7 @@ import {
   path: './example/supplying-pizza.bpmn',
 })
 class PizzaCustomer {
-  @Node({ name: 'Hungry for Pizza', start: true, next: 'auto', follow: 'next' })
+  @Node({ name: 'Hungry for Pizza', start: true, next: 'auto' })
   public hungryForPizza(
     @Param('node') node: EventNode,
     @Param('token') token: Token,

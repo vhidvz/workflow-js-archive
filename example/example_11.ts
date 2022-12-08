@@ -40,7 +40,7 @@ class PizzaCustomer extends WorkflowJS {
     return { next: node.takeOutgoing() };
   }
 
-  @Node({ name: 'Calm Customer', finish: false })
+  @Node({ name: 'Calm Customer' })
   calmCustomer(
     @Param('node') node: ActivityNode,
     @Param('token') token: Token,
@@ -76,7 +76,7 @@ class PizzaCustomer extends WorkflowJS {
     return { next: node.takeOutgoing() };
   }
 
-  @Node({ name: 'Receive Payment', next: 'auto', follow: 'next' })
+  @Node({ name: 'Receive Payment', next: 'auto' })
   pizzaReceived(
     @Param('node') node: EventNode,
     @Param('token') token: Token,

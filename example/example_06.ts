@@ -3,7 +3,6 @@ import {
   ActivityNode,
   DataObject,
   DefineProcess,
-  Definition,
   EventNode,
   GatewayNode,
   Node,

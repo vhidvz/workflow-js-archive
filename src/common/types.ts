@@ -16,8 +16,6 @@ export type NodeOption = {
   start?: true;
   end?: true;
   next?: 'auto';
-  finish?: false;
-  follow?: 'next';
 };
 
 export type Metadata = {
@@ -32,5 +30,4 @@ export type Option = { id: string | symbol } | { name: string };
 export type DataObject<T = any> = {
   next?: Element | Element[];
   value?: T;
-  finish?: boolean;
 };
