@@ -16,3 +16,5 @@ export const parse = (xml: string): BPMNSchema => {
 
   return parse;
 };
+
+export const uuid = () => crypto.randomUUID();
